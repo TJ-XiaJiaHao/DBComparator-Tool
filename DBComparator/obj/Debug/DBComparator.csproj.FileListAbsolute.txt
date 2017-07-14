@@ -1,0 +1,1 @@
+C:\project\DBComparator\DBComparator\obj\Debug\DBComparator.csprojResolveAssemblyReference.cache
