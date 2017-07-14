@@ -243,8 +243,14 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="favicon.ico" />
+    <Content Include="FrontEnd\CSS\bootstrap.css" />
     <Content Include="FrontEnd\CSS\compare.css" />
+    <Content Include="FrontEnd\CSS\DBCompare.css" />
+    <Content Include="FrontEnd\CSS\style.css" />
+    <Content Include="FrontEnd\DBCompare.html" />
     <Content Include="FrontEnd\JS\compare.js" />
+    <Content Include="FrontEnd\JS\DBCompare.js" />
+    <Content Include="FrontEnd\JS\jquery-3.2.1.min.js" />
     <Content Include="FrontEnd\test.html" />
     <Content Include="Global.asax" />
     <Content Include="Areas\HelpPage\Views\Web.config" />

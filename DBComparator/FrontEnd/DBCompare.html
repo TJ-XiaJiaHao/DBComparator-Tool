@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DBCompare</title>
+
+    <link rel="stylesheet" type="text/css" href="CSS/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
+    <link rel="stylesheet" type="text/css" href="CSS/DBCompare.css"/>
+</head>
+<body>
+
+<div id="db-input">
+    <div class="col-md-3 col-sm-2"></div>
+
+    <div class="col-md-6 col-sm-8 db-input-div">
+        <h1 class="db-input-title">DATABASE ONE</h1>
+        <form class="form-horizontal db-input-form" role="form">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <input type="text" class="form-control input-lg db-input-text" id="servername-one" placeholder="server name"  title="you can get the server name in the sql server management tool!"
+                           data-container="body" data-toggle="popover" data-placement="right">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <input type="text" class="form-control input-lg db-input-text" id="db-name-one" placeholder="database name" title="please input the database name you want to compare"
+                           data-container="body" data-toggle="popover" data-placement="right">
+                </div>
+            </div>
+        </form>
+
+
+        <h1 class="db-input-title">DATABASE TWO</h1>
+        <form class="form-horizontal db-input-form" role="form">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <input type="text" class="form-control input-lg db-input-text" id="servername-two" placeholder="server name" title="you can get the server name in the sql server management tool!"
+                           data-container="body" data-toggle="popover" data-placement="right" >
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <input type="text" class="form-control input-lg db-input-text" id="db-name-two" placeholder="database name" title="please input the database name you want to compare"
+                           data-container="body" data-toggle="popover" data-placement="right">
+                </div>
+            </div>
+        </form>
+
+
+        <div class="col-sm-12 btn-compare-div">
+            <button type="submit" class="btn btn-default btn-compare">Compare</button>
+        </div>
+    </div>
+
+</div>
+
+<div id="header">
+    <div class="col-sm-4"><label class="header-label header-db"></label></div>
+    <div class="col-sm-4 compare-title"><label class="compare-title-text">COMPARING...</label></div>
+    <div class="col-sm-4">
+        <button type="submit" class="btn btn-default header-btns btn-recompare">RECOMPARE</button>
+        <button type="submit" class="btn btn-default header-btns btn-reinput">REINPUT</button>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript" src="JS/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="JS/DBCompare.js"></script>
+<script type="text/javascript" src="JS/bootstrap.js"></script>
+</html>

@@ -1,0 +1,54 @@
+/* Database input */
+#db-input{
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    padding-top:100px;
+}
+.db-input-div{
+    height:800px;
+}
+.db-input-title{
+    text-align: center;
+    font-weight:500;
+    font-size:60px;
+}
+.db-input-form{
+    margin:40px 0 80px;
+}
+.btn-compare-div{
+    text-align: center;
+}
+.db-input-text{
+    text-align: center;
+}
+
+/* Header */
+#header{
+    width:0;
+    height:50px;
+    border-bottom:1px solid;
+    margin:0 auto;
+    overflow: hidden;
+}
+.header-label{
+    height:50px;
+    line-height:50px;
+    opacity:0;
+    padding-top:10px;
+}
+.btn-reinput,.btn-recompare{
+    float:right;
+    margin:17px 10px;
+    opacity:0;
+}
+.compare-title{
+    text-align: center;
+    line-height:50px;
+}
+.compare-title-text{
+    opacity:0;
+    margin-top:10px;
+}

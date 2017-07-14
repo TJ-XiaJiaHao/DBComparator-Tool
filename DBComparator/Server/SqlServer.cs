@@ -17,6 +17,7 @@ namespace DBComparator.Server
         /// <returns></returns>
         public static SqlConnection createConnectionLocal(string server, string database)
         {
+            if (server == "" || database == "") return null;
             SqlConnection conn = new SqlConnection();
             conn.ConnectionString = "server=" + server + ";database=" + database + ";Trusted_Connection=SSPI";
             try

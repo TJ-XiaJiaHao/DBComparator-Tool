@@ -44,6 +44,10 @@ namespace DBComparator.Controllers
             {
                 rtn.code = ResponseCode.SUCCESS;
                 rtn.msg = "Database not found";
+                // close the database connection
+                conn1.Close();
+                conn2.Close();
+
                 return rtn;
             }
 
