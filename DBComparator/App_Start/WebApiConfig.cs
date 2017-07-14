@@ -23,6 +23,11 @@ namespace DBComparator
             // To disable tracing in your application, please comment out or remove the following line of code
             // For more information, refer to: http://www.asp.net/web-api
             config.EnableSystemDiagnosticsTracing();
+
+            var jsonFormatter = new JsonMediaTypeFormatter();
+            //optional: set serializer settings here
+            config.Services.Replace(typeof(IContentNegotiator), new JsonContentNegotiator(jsonFormatter));
+        
         }
     }
 }
