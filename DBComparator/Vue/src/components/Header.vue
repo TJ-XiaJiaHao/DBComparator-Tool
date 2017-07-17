@@ -1,11 +1,11 @@
 <template>
   <div id="header">
     <dbinput></dbinput>
-    <div class="col-sm-4"><label class="header-label header-db"></label></div>
+    <div class="col-sm-4"><label class="header-label header-db">{{ DBInfo }}</label></div>
     <div class="col-sm-4 compare-title"><label class="compare-title-text">{{ status }}</label></div>
     <div class="col-sm-4">
       <button type="submit" class="btn btn-default header-btns btn-recompare">RECOMPARE</button>
-      <button type="submit" class="btn btn-default header-btns btn-reinput">REINPUT</button>
+      <button type="submit" class="btn btn-default header-btns btn-reinput" @click="reinput">REINPUT</button>
     </div>
   </div>
 </template>
@@ -20,11 +20,13 @@
     },
     data () {
       return {
+        DBInfo: "",
         status: 'COMPARING...'
       }
     },
     methods: {
       compareDatabases: function (server1, dbname1, server2, dbname2) {
+        this.status = "COMPARING...";
         var url = global.host + "/api/DBComparator?server1=" + server1 + "&dbname1=" + dbname1 + "&server2=" + server2 + "&dbname2=" + dbname2;
         console.log("[ GET ] - " + url);
         this.$http.get(url).then(function (response) {
@@ -39,10 +41,29 @@
                 console.log(data.tables);
               }
             }
-          },function (error) {
+          }, function (error) {
             console.log("[ ERROR ] - ", error);
           }
         );
+      },
+      showHeader: function () {
+        $(".compare-title-text").css("color", "black");
+        $("#header").animate({width: '100%'}, 500, function () {
+          $(".header-db").animate({opacity: '1', paddingTop: '0'}, 1000);
+          $(".header-btns").animate({opacity: '1', marginTop: '7px'}, 1000);
+          $(".compare-title-text").animate({opacity: '1', marginTop: '0px'}, 1000);
+          //showTable();
+        });
+      },
+      hideHeader:function(){
+        $(".header-db").css("opacity","0").css("paddingTop","10px");
+        $(".header-btns").css("opacity","0").css("marginTop","17px");
+        $(".compare-title-text").css("opacity","0").css("marginTop","10px");
+        $("#header").animate({width:'0'},500);
+        bus.$emit("showDBInput","");
+      },
+      reinput:function(){
+        this.hideHeader();
       }
     }
     ,
@@ -51,10 +72,11 @@
       var self = this;
       // 监听事件
       bus.$on("compareDB", function (data) {
+        self.DBInfo = data.server1 + "," + data.dbname1 + " ; " + data.server2 + "," + data.dbname2;
         self.compareDatabases(data.server1, data.dbname1, data.server2, data.dbname2);
       });
       bus.$on("showHeader", function (data) {
-        $(".compare-title-text").css("color", "black");
+        self.showHeader();
       });
     }
   }
@@ -74,6 +96,7 @@
     line-height: 50px;
     opacity: 0;
     padding-top: 10px;
+    text-align:left;
   }
 
   .btn-reinput, .btn-recompare {

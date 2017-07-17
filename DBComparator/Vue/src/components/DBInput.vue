@@ -20,8 +20,6 @@
           </div>
         </div>
       </form>
-
-
       <h1 class="db-input-title">DATABASE TWO</h1>
       <form class="form-horizontal db-input-form" role="form">
         <div class="form-group">
@@ -39,8 +37,6 @@
           </div>
         </div>
       </form>
-
-
       <div class="col-sm-12 btn-compare-div">
         <button type="submit" class="btn btn-default btn-compare" @click="submit">Compare</button>
       </div>
@@ -71,33 +67,47 @@
       submit: function () {
         console.log("[ SUBMIT ] - db1: " + this.server1 + " " + this.dbname1 + " ; db2: " + this.server2 + " " + this.dbname2);
         if (!this.check()) return;
-        bus.$emit("compareDB",{server1:this.server1,dbname1:this.dbname1,server2:this.server2,dbname2:this.dbname2});
+        bus.$emit("compareDB", {
+          server1: this.server1,
+          dbname1: this.dbname1,
+          server2: this.server2,
+          dbname2: this.dbname2
+        });
         this.hideDBInput();
       },
       hideDBInput: function () {
         var dbInput = $("#db-input");
         dbInput.animate({paddingTop: '30px', opacity: 0}, 1000, function () {
           dbInput.css("display", "none");
-          bus.$emit("showHeader","COMPARING...");
+          bus.$emit("showHeader", "COMPARING...");
         })
       },
       showDBInput: function () {
         var dbInput = $("#db-input");
-
         dbInput.css("display", "block");
-        dbInput.animate({paddingTop: '100px', opacity: 1}, 1000);
+        dbInput.animate({paddingTop: '50px', opacity: 1}, 1000);
       }
     },
     mounted() {
-        window.onload = function(){
-          toastr.options = {
-            closeButton: true,
-            progressBar: true,
-            showMethod: 'slideDown',
-            timeOut: 4000
-          };
-          toastr.success("Welcome to DBComparator!");
+      var self = this;
+      window.onload = function () {
+        $("#servername-one").tooltip();
+        $("#servername-two").tooltip();
+        $("#db-name-one").tooltip();
+        $("#db-name-two").tooltip();
+
+        toastr.options = {
+          closeButton: true,
+          progressBar: true,
+          showMethod: 'slideDown',
+          timeOut: 4000
         };
+        toastr.success("Welcome to DBComparator!");
+
+        bus.$on("showDBInput", function (data) {
+          self.showDBInput();
+        })
+      };
     }
   }
 </script>
