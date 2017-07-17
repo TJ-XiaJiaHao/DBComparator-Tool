@@ -7,6 +7,7 @@ using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
 using DBComparator.Server;
+using System.Web.Http.Cors;
 
 namespace DBComparator
 {
@@ -32,6 +33,7 @@ namespace DBComparator
             var jsonFormatter = new JsonMediaTypeFormatter();
             //optional: set serializer settings here
             config.Services.Replace(typeof(IContentNegotiator), new JsonContentNegotiator(jsonFormatter));
+            config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
         
         }
     }

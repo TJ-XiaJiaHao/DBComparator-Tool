@@ -68,3 +68,6 @@ C:\project\DBComparator\DBComparator\bin\zh-Hans\System.Spatial.resources.dll
 C:\project\DBComparator\DBComparator\bin\zh-Hant\System.Spatial.resources.dll
 C:\project\DBComparator\DBComparator\obj\Debug\DBComparator.dll
 C:\project\DBComparator\DBComparator\obj\Debug\DBComparator.pdb
+C:\project\DBComparator\DBComparator\bin\System.Web.Cors.dll
+C:\project\DBComparator\DBComparator\bin\System.Web.Http.Cors.dll
+C:\project\DBComparator\DBComparator\bin\System.Web.Http.Cors.xml
