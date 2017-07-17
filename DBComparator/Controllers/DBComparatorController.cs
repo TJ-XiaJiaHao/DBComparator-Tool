@@ -13,40 +13,41 @@ namespace DBComparator.Controllers
 {
     public class DBComparatorController : ApiController
     {
-
         /// <summary>
-        /// POST
+        /// GET
         /// /api/DBComparator
         /// </summary>
-        /// <param name="twoDBStr"></param>
+        /// <param name="server1"></param>
+        /// <param name="dbname1"></param>
+        /// <param name="server2"></param>
+        /// <param name="dbname2"></param>
         /// <returns></returns>
-        [HttpPost]
-        public TableDiff compareLocal([FromBody]string twoDBStr)
+        [HttpGet]
+        public TableDiff compareLocal(string server1, string dbname1, string server2, string dbname2)
         {
+
             // Init the basic info about response body
             TableDiff rtn = new TableDiff();
             rtn.code = ResponseCode.SUCCESS;
             rtn.msg = "Succecssful";
 
-            // Split the input string to get the connection string of two databases
-            string[] dbs = twoDBStr.Split('&');
-            if (dbs.Length != 4)
+            if (server1 == null || dbname1 == null || server2 == null || dbname2 == null || server1.Trim() == "" || server2.Trim() == "" || dbname1.Trim() == "" || dbname2 == "")
             {
-                rtn.code = ResponseCode.ERROR;
-                rtn.msg = "Input error,please input four parameters splited with three &";
+                rtn.code = ResponseCode.INPUT_ERROR;
+                rtn.msg = "Null inputs are not be allowed!";
                 return rtn;
             }
 
             // Connect to database
-            SqlConnection conn1 = SqlServer.createConnectionLocal(dbs[0], dbs[1]);
-            SqlConnection conn2 = SqlServer.createConnectionLocal(dbs[2], dbs[3]);
+            SqlConnection conn1 = SqlServer.createConnectionLocal(server1, dbname1);
+            SqlConnection conn2 = SqlServer.createConnectionLocal(server2, dbname2);
             if (conn1 == null || conn2 == null)
             {
-                rtn.code = ResponseCode.SUCCESS;
+                rtn.code = ResponseCode.DB_NOT_FUND;
                 rtn.msg = "Database not found";
                 // close the database connection
-                conn1.Close();
-                conn2.Close();
+                if (conn1 != null) conn1.Close();
+                if (conn2 != null) conn2.Close();
 
                 return rtn;
             }
@@ -69,7 +70,6 @@ namespace DBComparator.Controllers
 
             return rtn;
         }
-
 
 
 

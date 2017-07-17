@@ -16,21 +16,21 @@ namespace DBComparator.Models
         {
         }
 
-        public Table(string name, bool coexit, string dbname)
+        public Table(string name, bool coexist, string dbname)
         {
             this.name = name;
-            this.coexit = coexit;
+            this.coexist = coexist;
             this.dbnameIfNotCoexit = dbname;
             columns = new List<ColumnDiff>();
             keys = new List<Key>();
-            indexs = new List<Indexs>();
+            indexes = new List<Indexs>();
         }
 
         public string name { get; set; }
-        public bool coexit { get; set; }
+        public bool coexist { get; set; }
         public string dbnameIfNotCoexit { get; set; }
         public List<ColumnDiff> columns { get; set; }
         public List<Key> keys { get; set; }
-        public List<Indexs> indexs { get; set; }
+        public List<Indexs> indexes { get; set; }
     }
 }

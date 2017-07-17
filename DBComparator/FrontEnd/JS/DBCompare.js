@@ -21,14 +21,14 @@ function init(){
         var db1 = $("#db-name-one").val();
         var db2 = $("#db-name-two").val();
         $(".header-db").text(server1 + "," + db1 + " ; " + server2 + "," + db2);
-        connectionStr = server1 + "&" + db1 + "&" +server2 + "&" + db2;
-        submitDBs(connectionStr);
+        submitDBs(server1,db1,server2,db2);
         hideDBInput();
     });
 
     // reinput btn click event
     $(".btn-reinput").click(function(){
         hideHeader();
+        hideTable();
     })
 }
 
@@ -38,6 +38,7 @@ function showHeader(){
         $(".header-db").animate({opacity:'1',paddingTop:'0'},1000);
         $(".header-btns").animate({opacity:'1',marginTop:'7px'},1000);
         $(".compare-title-text").animate({opacity:'1',marginTop:'0px'},1000);
+        showTable();
     });
 }
 function hideHeader(){
@@ -49,10 +50,19 @@ function hideHeader(){
 }
 
 // DBInput function
-function submitDBs(connectStr){
-    $.post("/api/DBComparator", { "": connectStr }, function (data) {
-        response = data;
-        console.log(response);
+function submitDBs(server1,dbname1,server2,dbname2){
+    $(".compare-title-text").text("COMPARING...").css("color","black");
+    var url = "/api/DBComparator?server1=" + server1 + "&dbname1=" + dbname1 + "&server2=" + server2 + "&dbname2=" + dbname2;
+    $.get(url, function (data) {
+        console.log(url,data);
+        if(data.code > 1000){
+            $(".compare-title-text").text("ERROR:" + data.msg).css("color","red");
+        }
+        else if(data.code == 1000){
+            $(".compare-title-text").text("TABLES");
+            console.log(data.tables);
+            initTableDiff(data.tables);
+        }
     });
 }
 function hideDBInput(){
@@ -68,4 +78,53 @@ function showDBInput(){
 
     dbInput.css("display","block");
     dbInput.animate({paddingTop:'100px',opacity:1},1000);
+}
+
+// Table function
+function showTable(){
+    $("#main").animate({paddingLeft:'50px',opacity:'1'},1000);
+}
+function hideTable(){
+    $("#main").animate({paddingLeft:'100px',opacity:'0'},1000);
+}
+function initTable(columnDefs,rowData){
+    // let the grid know which columns and what data to use
+    var gridOptions = {
+        columnDefs: columnDefs,
+        rowData: rowData,
+        onGridReady: function () {
+            gridOptions.api.sizeColumnsToFit();
+        },
+        enableSorting:true,
+        enableFilter:true
+    };
+
+    // lookup the container we want the Grid to use
+    var eGridDiv = document.querySelector('#main');
+
+    // create the grid passing in the div to use together with the columns & data we want to use
+    new agGrid.Grid(eGridDiv, gridOptions);
+}
+function initTableDiff(tables){
+    var columnDefs = [
+        {headerName: "NAME", field: "name"},
+        {headerName: "COEXIST", field: "coexist"},
+        {headerName: "BELONG", field: "belong"},
+        {headerName: "COLUMNS", field: "columns"},
+        {headerName: "INDEXES", field: "indexes"},
+        {headerName: "KEYS", field: "keys"}
+    ];
+    var rowData = [];
+    for(var i = 0; i < tables.length;i++){
+        var item = tables[i];
+        rowData.push({
+            name:item.name,
+            coexist:item.coexist,
+            belong:item.dbnameIfNotCoexit,
+            columns:item.columns.length,
+            indexes:item.indexes.length,
+            keys:item.keys.length
+        })
+    }
+    initTable(columnDefs,rowData)
 }

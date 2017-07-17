@@ -58,9 +58,9 @@ namespace DBComparator.Server
             {
                 Table table = new Table(item, true, "");
                 table.columns = compareColumns(conn1, conn2, item);
-                table.indexs = compareIndexs(conn1, conn2, item);
+                table.indexes = compareIndexs(conn1, conn2, item);
                 table.keys = compareKeys(conn1, conn2, item);
-                if (table.columns.Count() != 0 && table.indexs.Count() != 0 && table.keys.Count() != 0) rtnTables.Add(table);
+                if (table.columns.Count() != 0 && table.indexes.Count() != 0 && table.keys.Count() != 0) rtnTables.Add(table);
             }
             return rtnTables;
         }
@@ -92,12 +92,12 @@ namespace DBComparator.Server
             while (dr1.Read())
             {
                 // index name is the first element
-                indexs1.indexs.Add(dr1[0].ToString());
+                indexs1.indexes.Add(dr1[0].ToString());
             }
             while (dr2.Read())
             {
                 // index name is the first element
-                indexs2.indexs.Add(dr2[0].ToString());
+                indexs2.indexes.Add(dr2[0].ToString());
             }
 
             if (!indexs1.compare(indexs2))
@@ -263,7 +263,7 @@ namespace DBComparator.Server
             foreach (Column item in toBeDelete1)
             {
                 ColumnDiff colDiff = new ColumnDiff(item.colname);
-                item.exit = true;
+                item.exist = true;
                 Column noCol = new Column(dbname2, item.colname, false);
 
                 colDiff.different.Add(item);
@@ -275,7 +275,7 @@ namespace DBComparator.Server
             foreach (Column item in toBeDelete2)
             {
                 ColumnDiff colDiff = new ColumnDiff(item.colname);
-                item.exit = true;
+                item.exist = true;
                 Column noCol = new Column(dbname1, item.colname, false);
 
                 colDiff.different.Add(item);

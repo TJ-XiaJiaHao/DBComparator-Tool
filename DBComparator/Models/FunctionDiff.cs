@@ -15,12 +15,12 @@ namespace DBComparator.Models
         public FunctionDiff(string name, bool coexit)
         {
             this.name = name;
-            this.coexit = coexit;
+            this.coexist = coexit;
             this.different = new List<Function>();
         }
 
         public string name { get; set; }
-        public bool coexit { get; set; }
+        public bool coexist { get; set; }
         public List<Function> different { get; set; }
     }
 }

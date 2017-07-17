@@ -16,22 +16,22 @@ namespace DBComparator.Models
         {
             this.dbname = dbname;
             this.tbname = tbname;
-            indexs = new List<string>();
+            indexes = new List<string>();
         }
 
         public string dbname { get; set; }
         public string tbname { get; set; }
-        public List<string> indexs { get; set; }
+        public List<string> indexes { get; set; }
         public bool compare(Indexs index)
         {
-            this.indexs.Sort();
-            index.indexs.Sort();
+            this.indexes.Sort();
+            index.indexes.Sort();
 
-            if (this.indexs.Count() != index.indexs.Count()) return false;
+            if (this.indexes.Count() != index.indexes.Count()) return false;
 
-            for (int i = 0; i < this.indexs.Count(); i++)
+            for (int i = 0; i < this.indexes.Count(); i++)
             {
-                if (this.indexs[i] != index.indexs[i]) return false;
+                if (this.indexes[i] != index.indexes[i]) return false;
             }
 
             return true;

@@ -12,15 +12,15 @@ namespace DBComparator.Models
         {
         }
 
-        public StoredProcedureDiff(string name, bool coexit)
+        public StoredProcedureDiff(string name, bool coexist)
         {
             this.name = name;
-            this.coexit = coexit;
+            this.coexist = coexist;
             this.different = new List<StoredProcedure>();
         }
 
         public string name { get; set; }
-        public bool coexit { get; set; }
+        public bool coexist { get; set; }
         public List<StoredProcedure> different { get; set; }
     }
 }

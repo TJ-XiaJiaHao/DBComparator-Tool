@@ -13,12 +13,12 @@ namespace DBComparator.Models
         {
 
         }
-        public Function(string dbname, string name, string statements, bool exit)
+        public Function(string dbname, string name, string statements, bool exist)
         {
             this.dbname = dbname;
             this.name = name;
             this.statements = statements;
-            this.exit = exit;
+            this.exist = exist;
             this.regex = RemoveSqlComment(this.statements).Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
         }
 
@@ -48,7 +48,7 @@ namespace DBComparator.Models
 
         public string dbname { get; set; }
         public string name { get; set; }
-        public bool exit { get; set; }
+        public bool exist { get; set; }
         public string statements { get; set; }
         public string regex { get; set; }
     }
