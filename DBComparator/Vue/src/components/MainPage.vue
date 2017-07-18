@@ -1,5 +1,6 @@
 <template>
   <div id="main">
+    <code-compare></code-compare>
     <h4 v-if="isNoItems">no items are different</h4>
     <table class="table table-hover">
       <thead>
@@ -8,7 +9,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(row,rowIndex) in current.body">
+      <tr v-for="(row,rowIndex) in current.body" @click="itemClick(rowIndex)">
         <td v-for="(col,colIndex) in row" v-bind:title="current.tooltip">{{ col }}</td>
       </tr>
       </tbody>
@@ -18,8 +19,12 @@
 
 <script>
   import bus from "../assets/eventBus"
+  import codeCompare from "@/components/CodeCompare"
   export default {
     name: 'DBInput',
+    components:{
+        codeCompare:codeCompare
+    },
     data () {
       return {
         isNoItems: false,
@@ -70,10 +75,10 @@
         this.initCurrent(["NAME", "COEXIST", "BELONG", "COLUMNS", "INDEXES", "KEYS"], this.tableDiff,"", "TABLES")
       },
       showProcedureDiff: function () {
-        this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.procedureDiff,"click to view details", "PROCEDURES")
+        this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.procedureDiff,"click to view differences", "PROCEDURES")
       },
       showFunctionDiff: function () {
-        this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.functionDiff,"click to view details", "FUNCTIONS")
+        this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.functionDiff,"click to view differences", "FUNCTIONS")
       },
 
       /* Sort function, when you click the table header,table will be sorted by the alphabet order */
@@ -83,6 +88,11 @@
         this.current.body.sort(function (a, b) {
           return self.current.sortDir == 1 ? a[index] > b[index] : a[index] < b[index]
         })
+      },
+
+      /* Item click event, it will check the current type to decide how to handle it*/
+      itemClick: function (index) {
+          bus.$emit("showCode",{dbname1:"a",dbname2:"b",childname1:"c",childname2:"d",code1:"e",code2:"f"});
       }
     },
     watch: {
