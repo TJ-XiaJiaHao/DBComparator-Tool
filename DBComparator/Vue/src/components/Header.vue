@@ -41,22 +41,25 @@
         this.status = "COMPARING...";
         this.data = {};
         $(".compare-title-text").css("color", "black");
+        console.log("[ EVENT ] - Header Clear");
       },
       compareDatabases: function (callback) {
         var url = global.host + "/api/DBComparator?server1=" + this.server1 + "&dbname1=" + this.dbname1 + "&server2=" + this.server2 + "&dbname2=" + this.dbname2;
         console.log("[ GET ] - " + url);
         this.clear();
+        var self = this;
         this.$http.get(url).then(function (response) {
             if (response.status == 200) {
               if (response.body.code > 1000) {
-                this.status = "ERROR:" + response.body.msg;
+                self.status = "ERROR:" + response.body.msg;
                 $(".compare-title-text").css("color", "red");
               }
               else if (response.body.code == 1000) {
-                this.status = "TABLES";
-                this.data = response.body;
+                self.status = "TABLES";
+                self.data = response.body;
                 console.log("[ RESPONSE ] - ", this.data);
                 bus.$emit("changeData", this.data);
+                self.selectedChange();
                 if (callback != null) callback();
               }
             }
@@ -93,24 +96,27 @@
           bus.$emit("showTable", self.data);
         });
         bus.$emit("hideTable", "");
+      },
+      selectedChange:function(){
+        switch (this.selected){
+          case "TABLES":
+            this.status = "TABLES";
+            bus.$emit("showTableDiff","");
+            break;
+          case "PROCEDURES":
+            this.status = "PROCEDURES";
+            bus.$emit("showProcedureDiff");
+            break;
+          case "FUNCTIONS":
+            this.status = "FUNCTIONS";
+            bus.$emit("showFunctionDiff");
+            break;
+        }
       }
     },
     watch: {
       selected: function (newSelected) {
-        switch (newSelected){
-          case "TABLES":
-            this.status = "TABLES";
-              bus.$emit("showTableDiff","");
-              break;
-          case "PROCEDURES":
-            this.status = "PROCEDURES";
-              bus.$emit("showProcedureDiff");
-              break;
-          case "FUNCTIONS":
-            this.status = "FUNCTIONS";
-              bus.$emit("showFunctionDiff");
-              break;
-        }
+        this.selectedChange();
       }
     },
     mounted()
@@ -130,7 +136,7 @@
 
       $(document).ready(function () {
         $('#option-selector').selectpicker({
-          'selectedText': 'Mustard'
+          'selectedText': 'TABLES'
         });
       });
     }

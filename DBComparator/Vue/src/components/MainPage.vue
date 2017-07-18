@@ -9,7 +9,7 @@
       </thead>
       <tbody>
       <tr v-for="(row,rowIndex) in current.body">
-        <td v-for="(col,colIndex) in row">{{ col }}</td>
+        <td v-for="(col,colIndex) in row" v-bind:title="current.tooltip">{{ col }}</td>
       </tr>
       </tbody>
     </table>
@@ -28,9 +28,11 @@
         procedureDiff: [],
         functionDiff: [],
         current: {
+          type:"TABLES",
           header: [],
           body: [],
-          sortDir: -1        // 1 means forward -1 means backward
+          sortDir: -1,        // 1 means forward -1 means backward
+          tooltip:""
         }
       }
     },
@@ -43,12 +45,16 @@
       },
       clear: function () {
         this.tableDiff = [];
+        this.procedureDiff = [];
+        this.functionDiff = [];
         this.current.header = [];
         this.current.body = [];
       },
       showTableDiff: function () {
         this.current.header = ["NAME", "COEXIST", "BELONG", "COLUMNS", "INDEXES", "KEYS"];
         this.current.body = this.tableDiff;
+        this.current.tooltip = "";
+        this.current.type = "TABLSE";
         if (this.tableDiff.length == 0) {
           this.isNoItems = true;
           this.current.header = [];
@@ -58,6 +64,8 @@
       showProcedureDiff: function () {
         this.current.header = ["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"];
         this.current.body = this.procedureDiff;
+        this.current.tooltip = "click to view details";
+        this.current.type = "PROCEDURES";
         if (this.procedureDiff.length == 0) {
           this.isNoItems = true;
           this.current.header = [];
@@ -67,6 +75,8 @@
       showFunctionDiff: function () {
         this.current.header = ["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"];
         this.current.body = this.functionDiff;
+        this.current.tooltip = "click to view details";
+        this.current.type = "FUNCTIONS";
         if (this.functionDiff.length == 0) {
           this.isNoItems = true;
           this.current.header = [];
@@ -99,18 +109,32 @@
           var item = newData.functions[i];
           self.functionDiff.push([item.name, item.coexist, item.different[0].dbname, item.different[0].exist, item.different[1].dbname, item.different[1].exist]);
         }
-        self.showTableDiff();
+        switch(self.current.type){
+          case "TABLES":
+              self.showTableDiff();
+              break;
+          case "PROCEDURES":
+            self.showProcedureDiff();
+            break;
+          case "FUNCTIONS":
+            self.showFunctionDiff();
+            break;
+          default:
+              self.showTableDiff();
+        }
       }
     },
     mounted() {
       var self = this;
       bus.$on("showTable", function (data) {
+        console.log("[ EVENT ] - showTable", data);
         self.showTable();
         self.data = data;
       })
       bus.$on("hideTable", function (data) {
-        this.data = {}
-        this.clear();
+        console.log("[ EVENT ] - hideTable", data);
+        self.data = {}
+        self.clear();
         self.hideTable();
       });
       bus.$on("changeData", function (data) {
