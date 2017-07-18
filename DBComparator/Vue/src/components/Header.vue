@@ -1,10 +1,16 @@
 <template>
   <div id="header">
     <dbinput></dbinput>
-    <div class="col-sm-4"><label class="header-label header-db">{{ DBInfo }}</label></div>
+    <div class="col-sm-4"><label class="header-label header-db">{{ server1 }}  {{ dbname1 }} | {{ server2 }}  {{ dbname2
+      }}</label></div>
     <div class="col-sm-4 compare-title"><label class="compare-title-text">{{ status }}</label></div>
     <div class="col-sm-4">
-      <button type="submit" class="btn btn-default header-btns btn-recompare">RECOMPARE</button>
+      <div id="selector" class="header-btns">
+        <select id="option-selector" class=" selectpicker form-control" data-width="100%" v-model="selected">
+          <option v-for="(item,index) in options">{{ item }}</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-default header-btns btn-recompare" @click="recompare">RECOMPARE</button>
       <button type="submit" class="btn btn-default header-btns btn-reinput" @click="reinput">REINPUT</button>
     </div>
   </div>
@@ -20,25 +26,38 @@
     },
     data () {
       return {
-        DBInfo: "",
-        status: 'COMPARING...'
+        server1: "",
+        server2: "",
+        dbname1: "",
+        dbname2: "",
+        status: 'COMPARING...',
+        data: {},
+        options: ["TABLES", "PROCEDURES", "FUNCTIONS"],
+        selected: "0"
       }
     },
     methods: {
-      compareDatabases: function (server1, dbname1, server2, dbname2) {
+      clear: function () {
         this.status = "COMPARING...";
-        var url = global.host + "/api/DBComparator?server1=" + server1 + "&dbname1=" + dbname1 + "&server2=" + server2 + "&dbname2=" + dbname2;
+        this.data = {};
+        $(".compare-title-text").css("color", "black");
+      },
+      compareDatabases: function (callback) {
+        var url = global.host + "/api/DBComparator?server1=" + this.server1 + "&dbname1=" + this.dbname1 + "&server2=" + this.server2 + "&dbname2=" + this.dbname2;
         console.log("[ GET ] - " + url);
+        this.clear();
         this.$http.get(url).then(function (response) {
             if (response.status == 200) {
-              var data = response.body;
-              if (data.code > 1000) {
-                this.status = "ERROR:" + data.msg;
+              if (response.body.code > 1000) {
+                this.status = "ERROR:" + response.body.msg;
                 $(".compare-title-text").css("color", "red");
               }
-              else if (data.code == 1000) {
+              else if (response.body.code == 1000) {
                 this.status = "TABLES";
-                console.log(data.tables);
+                this.data = response.body;
+                console.log("[ RESPONSE ] - ", this.data);
+                bus.$emit("changeData", this.data);
+                if (callback != null) callback();
               }
             }
           }, function (error) {
@@ -47,36 +66,72 @@
         );
       },
       showHeader: function () {
-        $(".compare-title-text").css("color", "black");
+        var self = this;
         $("#header").animate({width: '100%'}, 500, function () {
           $(".header-db").animate({opacity: '1', paddingTop: '0'}, 1000);
           $(".header-btns").animate({opacity: '1', marginTop: '7px'}, 1000);
           $(".compare-title-text").animate({opacity: '1', marginTop: '0px'}, 1000);
-          //showTable();
+          console.log("[ EVENT ] - showTable", self.data);
+          bus.$emit("showTable", self.data);
         });
       },
-      hideHeader:function(){
-        $(".header-db").css("opacity","0").css("paddingTop","10px");
-        $(".header-btns").css("opacity","0").css("marginTop","17px");
-        $(".compare-title-text").css("opacity","0").css("marginTop","10px");
-        $("#header").animate({width:'0'},500);
-        bus.$emit("showDBInput","");
+      hideHeader: function () {
+        $(".header-db").css("opacity", "0").css("paddingTop", "10px");
+        $(".header-btns").css("opacity", "0").css("marginTop", "17px");
+        $(".compare-title-text").css("opacity", "0").css("marginTop", "10px");
+        $("#header").animate({width: '0'}, 500);
+        bus.$emit("showDBInput", "");
       },
-      reinput:function(){
+      reinput: function () {
         this.hideHeader();
+        bus.$emit("hideTable", "");
+      },
+      recompare: function () {
+        var self = this;
+        this.compareDatabases(function () {
+          console.log("[ EVENT ] - showTable", self.data);
+          bus.$emit("showTable", self.data);
+        });
+        bus.$emit("hideTable", "");
       }
-    }
-    ,
+    },
+    watch: {
+      selected: function (newSelected) {
+        switch (newSelected){
+          case "TABLES":
+            this.status = "TABLES";
+              bus.$emit("showTableDiff","");
+              break;
+          case "PROCEDURES":
+            this.status = "PROCEDURES";
+              bus.$emit("showProcedureDiff");
+              break;
+          case "FUNCTIONS":
+            this.status = "FUNCTIONS";
+              bus.$emit("showFunctionDiff");
+              break;
+        }
+      }
+    },
     mounted()
     {
       var self = this;
       // 监听事件
       bus.$on("compareDB", function (data) {
-        self.DBInfo = data.server1 + "," + data.dbname1 + " ; " + data.server2 + "," + data.dbname2;
-        self.compareDatabases(data.server1, data.dbname1, data.server2, data.dbname2);
+        self.server1 = data.server1;
+        self.server2 = data.server2;
+        self.dbname1 = data.dbname1;
+        self.dbname2 = data.dbname2;
+        self.compareDatabases();
       });
       bus.$on("showHeader", function (data) {
         self.showHeader();
+      });
+
+      $(document).ready(function () {
+        $('#option-selector').selectpicker({
+          'selectedText': 'Mustard'
+        });
       });
     }
   }
@@ -88,23 +143,26 @@
     height: 50px;
     border-bottom: 1px solid;
     margin: 0 auto;
-    overflow: hidden;
+    overflow: visible;
   }
 
+  /* 左边的文字　*/
   .header-label {
     height: 50px;
     line-height: 50px;
     opacity: 0;
     padding-top: 10px;
-    text-align:left;
+    text-align: left;
   }
 
-  .btn-reinput, .btn-recompare {
+  /*　右边的按钮　*/
+  .btn-reinput, .btn-recompare, #selector {
     float: right;
     margin: 17px 10px;
     opacity: 0;
   }
 
+  /* 中间的标题 */
   .compare-title {
     text-align: center;
     line-height: 50px;

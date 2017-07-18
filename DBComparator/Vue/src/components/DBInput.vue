@@ -90,6 +90,12 @@
     },
     mounted() {
       var self = this;
+
+      bus.$on("showDBInput", function (data) {
+        console.log("[ EVENT ] - showDBInput");
+        self.showDBInput();
+      })
+
       window.onload = function () {
         $("#servername-one").tooltip();
         $("#servername-two").tooltip();
@@ -103,10 +109,6 @@
           timeOut: 4000
         };
         toastr.success("Welcome to DBComparator!");
-
-        bus.$on("showDBInput", function (data) {
-          self.showDBInput();
-        })
       };
     }
   }

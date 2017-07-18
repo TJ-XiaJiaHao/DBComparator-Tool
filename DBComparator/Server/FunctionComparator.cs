@@ -15,18 +15,15 @@ namespace DBComparator.Server
         {
             List<Function> functions1 = getFunctions(conn1);
             List<Function> functions2 = getFunctions(conn2);
-            return getDiffFunctions(functions1, functions2);
+            return getDiffFunctions(functions1, functions2, conn1.Database, conn2.Database);
         }
 
-        private List<FunctionDiff> getDiffFunctions(List<Function> functions1, List<Function> functions2)
+        private List<FunctionDiff> getDiffFunctions(List<Function> functions1, List<Function> functions2,string dbname1,string dbname2)
         {
             List<FunctionDiff> rtn = new List<FunctionDiff>();
 
             functions1.Sort((a, b) => a.name.CompareTo(b.name));
             functions2.Sort((a, b) => a.name.CompareTo(b.name));
-
-            string dbname1 = functions1.Count() > 0 ? functions1[0].dbname : "";
-            string dbname2 = functions2.Count() > 0 ? functions2[0].dbname : "";
 
             int pos1 = 0, pos2 = 0;
             while (pos1 < functions1.Count() && pos2 < functions2.Count())
