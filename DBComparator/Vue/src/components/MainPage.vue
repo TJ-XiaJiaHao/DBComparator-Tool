@@ -28,21 +28,24 @@
         procedureDiff: [],
         functionDiff: [],
         current: {
-          type:"TABLES",
+          type: "TABLES",
           header: [],
           body: [],
           sortDir: -1,        // 1 means forward -1 means backward
-          tooltip:""
+          tooltip: ""
         }
       }
     },
     methods: {
+      /* Table IN and OUT animation */
       showTable: function () {
         $("#main").animate({paddingLeft: '50px', opacity: '1'}, 500);
       },
       hideTable: function () {
         $("#main").animate({paddingLeft: '100px', opacity: '0'}, 0);
       },
+
+      /* Clear all the data */
       clear: function () {
         this.tableDiff = [];
         this.procedureDiff = [];
@@ -50,39 +53,30 @@
         this.current.header = [];
         this.current.body = [];
       },
-      showTableDiff: function () {
-        this.current.header = ["NAME", "COEXIST", "BELONG", "COLUMNS", "INDEXES", "KEYS"];
-        this.current.body = this.tableDiff;
-        this.current.tooltip = "";
-        this.current.type = "TABLSE";
-        if (this.tableDiff.length == 0) {
+
+      /* Show different data depends on the show type*/
+      initCurrent: function (headers, body, tooltip, type) {
+        this.current.header = headers;
+        this.current.body = body;
+        this.current.tooltip = tooltip;
+        this.current.type = type;
+        if (this.current.body.lenght == 0) {
           this.isNoItems = true;
           this.current.header = [];
         }
         else this.isNoItems = false;
+      },
+      showTableDiff: function () {
+        this.initCurrent(["NAME", "COEXIST", "BELONG", "COLUMNS", "INDEXES", "KEYS"], this.tableDiff,"", "TABLES")
       },
       showProcedureDiff: function () {
-        this.current.header = ["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"];
-        this.current.body = this.procedureDiff;
-        this.current.tooltip = "click to view details";
-        this.current.type = "PROCEDURES";
-        if (this.procedureDiff.length == 0) {
-          this.isNoItems = true;
-          this.current.header = [];
-        }
-        else this.isNoItems = false;
+        this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.procedureDiff,"click to view details", "PROCEDURES")
       },
       showFunctionDiff: function () {
-        this.current.header = ["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"];
-        this.current.body = this.functionDiff;
-        this.current.tooltip = "click to view details";
-        this.current.type = "FUNCTIONS";
-        if (this.functionDiff.length == 0) {
-          this.isNoItems = true;
-          this.current.header = [];
-        }
-        else this.isNoItems = false;
+        this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.functionDiff,"click to view details", "FUNCTIONS")
       },
+
+      /* Sort function, when you click the table header,table will be sorted by the alphabet order */
       sort: function (index) {
         var self = this;
         self.current.sortDir *= -1;
@@ -92,27 +86,35 @@
       }
     },
     watch: {
+      /* when data changed , refresh some relative data and refresh the front end*/
       data: function (newData) {
         var self = this;
         self.clear();
         if (newData.tables == null || newData.tables == undefined)return;
 
+        /* Refresh different tables information */
         for (var i = 0; i < newData.tables.length; i++) {
           var item = newData.tables[i];
           self.tableDiff.push([item.name, item.coexist, item.dbnameIfNotCoexit, item.columns.length, item.indexes.length, item.keys.length]);
         }
+
+        /* Refresh different procedures information */
         for (var i = 0; i < newData.storedProcedures.length; i++) {
           var item = newData.storedProcedures[i];
           self.procedureDiff.push([item.name, item.coexist, item.different[0].dbname, item.different[0].exist, item.different[1].dbname, item.different[1].exist]);
         }
+
+        /* Refresh different function information */
         for (var i = 0; i < newData.functions.length; i++) {
           var item = newData.functions[i];
           self.functionDiff.push([item.name, item.coexist, item.different[0].dbname, item.different[0].exist, item.different[1].dbname, item.different[1].exist]);
         }
-        switch(self.current.type){
+
+        /* Refresh the front end ,show different data depends on the show type*/
+        switch (self.current.type) {
           case "TABLES":
-              self.showTableDiff();
-              break;
+            self.showTableDiff();
+            break;
           case "PROCEDURES":
             self.showProcedureDiff();
             break;
@@ -120,12 +122,14 @@
             self.showFunctionDiff();
             break;
           default:
-              self.showTableDiff();
+            self.showTableDiff();
         }
       }
     },
     mounted() {
       var self = this;
+
+      /* Listen for events*/
       bus.$on("showTable", function (data) {
         console.log("[ EVENT ] - showTable", data);
         self.showTable();

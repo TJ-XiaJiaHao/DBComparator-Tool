@@ -57,6 +57,8 @@
       }
     },
     methods: {
+
+      /* Check if the databases information equals null or "" */
       check: function () {
         if (this.server1 == "" || this.server2 == "" || this.dbname1 == "" || this.dbname2 == "") {
           toastr.error("null input are not be allowed!")
@@ -64,6 +66,8 @@
         }
         return true;
       },
+
+      /* Submit the databases information to header component */
       submit: function () {
         console.log("[ SUBMIT ] - db1: " + this.server1 + " " + this.dbname1 + " ; db2: " + this.server2 + " " + this.dbname2);
         if (!this.check()) return;
@@ -75,6 +79,8 @@
         });
         this.hideDBInput();
       },
+
+      /* DBInput IN and OUT animation*/
       hideDBInput: function () {
         var dbInput = $("#db-input");
         dbInput.animate({paddingTop: '30px', opacity: 0}, 1000, function () {

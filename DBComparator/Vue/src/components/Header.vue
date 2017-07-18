@@ -37,12 +37,16 @@
       }
     },
     methods: {
+
+      /* Init some setting */
       clear: function () {
         this.status = "COMPARING...";
         this.data = {};
         $(".compare-title-text").css("color", "black");
         console.log("[ EVENT ] - Header Clear");
       },
+
+      /* Access the back-end to get the differences between two databases */
       compareDatabases: function (callback) {
         var url = global.host + "/api/DBComparator?server1=" + this.server1 + "&dbname1=" + this.dbname1 + "&server2=" + this.server2 + "&dbname2=" + this.dbname2;
         console.log("[ GET ] - " + url);
@@ -68,6 +72,8 @@
           }
         );
       },
+
+      /* Header IN adn OUT animation */
       showHeader: function () {
         var self = this;
         $("#header").animate({width: '100%'}, 500, function () {
@@ -85,6 +91,8 @@
         $("#header").animate({width: '0'}, 500);
         bus.$emit("showDBInput", "");
       },
+
+      /* Button events */
       reinput: function () {
         this.hideHeader();
         bus.$emit("hideTable", "");
@@ -92,7 +100,6 @@
       recompare: function () {
         var self = this;
         this.compareDatabases(function () {
-          console.log("[ EVENT ] - showTable", self.data);
           bus.$emit("showTable", self.data);
         });
         bus.$emit("hideTable", "");
@@ -122,7 +129,8 @@
     mounted()
     {
       var self = this;
-      // 监听事件
+
+      // Listen for events
       bus.$on("compareDB", function (data) {
         self.server1 = data.server1;
         self.server2 = data.server2;
