@@ -5,12 +5,17 @@
     <table class="table table-hover">
       <thead>
       <tr>
-        <th class="tb-head" v-for="(item,index) in current.header" @click="sort(index)" title="click to sort the table">{{ item }}</th>
+        <th class="tb-head" v-for="(item,index) in current.header" @click="sort(index)" title="click to sort the table">
+          {{ item }}
+        </th>
       </tr>
       </thead>
       <tbody>
-      <tr v-bind:class="{'tb-row':current.type != 'TABLES'}" v-for="(row,rowIndex) in current.body" @click="itemClick(rowIndex)">
-        <td v-for="(col,colIndex) in row" v-bind:title="current.tooltip">{{ col }}</td>
+      <tr v-bind:class="{'tb-row':current.type != 'TABLES'}" v-for="(row,rowIndex) in current.body"
+          @click="itemClick(rowIndex)">
+        <td v-for="(col,colIndex) in row" v-bind:title="current.tooltip" @click="colClick(rowIndex,colIndex)">{{ col
+          }}
+        </td>
       </tr>
       </tbody>
     </table>
@@ -80,6 +85,26 @@
       showFunctionDiff: function () {
         this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.functionDiff, "click to view differences", "FUNCTIONS")
       },
+      showColumnDiff: function (index) {
+        var columns = this.data.tables[index].columns;
+        var columnDiff = [];
+        for (var i = 0; i < columns.length; i++) {
+          var item = columns[i];
+          columnDiff.push([
+            item.name,
+            item.different[0].dbname,
+            item.different[0].exist,
+            item.different[0].propeties[3].value,
+            item.different[0].propeties[4].value,
+            item.different[1].dbname,
+            item.different[1].exist,
+            item.different[1].propeties[3].value,
+            item.different[1].propeties[4].value,
+          ]);
+        }
+        console.log(columns);
+        this.initCurrent(["NAME", "DBNAME", "EXIST", "DATA TYPE", "IS_NULLABLE", "DBNAME", "EXIST", "DATA TYPE", "IS_NULLABLE"], columnDiff, "", "COLUMNS")
+      },
 
       /* Sort function, when you click the table header,table will be sorted by the alphabet order */
       sort: function (index) {
@@ -95,11 +120,11 @@
         if (this.current.type == "PROCEDURES") {
           var name = this.procedureDiff[index][0];
           var pos = 0;
-          for(var i = 0; i < this.data.storedProcedures.length;i++){
-              if(this.data.storedProcedures[i].name == name){
-                  pos = i;
-                  break;
-              }
+          for (var i = 0; i < this.data.storedProcedures.length; i++) {
+            if (this.data.storedProcedures[i].name == name) {
+              pos = i;
+              break;
+            }
           }
           var dbname1 = this.data.storedProcedures[pos].different[0].dbname;
           var dbname2 = this.data.storedProcedures[pos].different[1].dbname;
@@ -119,8 +144,8 @@
         else if (this.current.type == "FUNCTIONS") {
           var name = this.functionDiff[index][0];
           var pos = 0;
-          for(var i = 0; i < this.data.functions.length;i++){
-            if(this.data.functions[i].name == name){
+          for (var i = 0; i < this.data.functions.length; i++) {
+            if (this.data.functions[i].name == name) {
               pos = i;
               break;
             }
@@ -139,6 +164,21 @@
             code1: code1,
             code2: code2
           });
+        }
+      },
+      colClick: function (rowindex, colindex) {
+        if (this.current.type == "TABLES") {
+          var name = this.tableDiff[rowindex][0];
+          var pos = 0;
+          for (var i = 0; i < this.data.tables.length; i++) {
+            if (this.data.tables[i].name == name) {
+              pos = i;
+              break;
+            }
+          }
+          if (colindex == 3) {
+            this.showColumnDiff(pos);
+          }
         }
       }
     },
@@ -235,9 +275,10 @@
 
   .tb-head {
     text-align: center;
-    cursor:default;
+    cursor: default;
   }
-  .tb-row{
-    cursor:pointer;
+
+  .tb-row {
+    cursor: pointer;
   }
 </style>
