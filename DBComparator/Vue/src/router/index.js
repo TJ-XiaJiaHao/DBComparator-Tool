@@ -11,7 +11,10 @@ export default new Router({
     {
       path: '/',
       name: 'Hello',
-      component: Hello
+      components: {
+        Header: Header,
+        MainPage: MainPage
+      }
     }, {
       path: '/mainpage',
       name: 'mainpage',

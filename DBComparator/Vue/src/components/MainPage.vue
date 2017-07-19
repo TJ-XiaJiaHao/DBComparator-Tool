@@ -1,6 +1,7 @@
 <template>
   <div id="main">
     <code-compare></code-compare>
+    <col-compare></col-compare>
     <h4 v-if="isNoItems">no items are different</h4>
     <table class="table table-hover">
       <thead>
@@ -11,7 +12,8 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-bind:class="{'tb-row':current.type != 'TABLES'}" v-for="(row,rowIndex) in current.body"
+      <tr v-bind:class="{'tb-row':(current.type == 'PROCEDURES' || current.type == 'FUNCTIONS')}"
+          v-for="(row,rowIndex) in current.body"
           @click="itemClick(rowIndex)">
         <td v-for="(col,colIndex) in row" v-bind:title="current.tooltip" @click="colClick(rowIndex,colIndex)">{{ col
           }}
@@ -25,10 +27,12 @@
 <script>
   import bus from "../assets/eventBus"
   import codeCompare from "@/components/CodeCompare"
+  import colCompare from "@/components/ColumnCompare"
   export default {
     name: 'DBInput',
     components: {
-      codeCompare: codeCompare
+      codeCompare: codeCompare,
+      colCompare: colCompare
     },
     data () {
       return {
@@ -86,24 +90,9 @@
         this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.functionDiff, "click to view differences", "FUNCTIONS")
       },
       showColumnDiff: function (index) {
+        if (this.data.tables[index].columns.length == 0)return;
         var columns = this.data.tables[index].columns;
-        var columnDiff = [];
-        for (var i = 0; i < columns.length; i++) {
-          var item = columns[i];
-          columnDiff.push([
-            item.name,
-            item.different[0].dbname,
-            item.different[0].exist,
-            item.different[0].propeties[3].value,
-            item.different[0].propeties[4].value,
-            item.different[1].dbname,
-            item.different[1].exist,
-            item.different[1].propeties[3].value,
-            item.different[1].propeties[4].value,
-          ]);
-        }
-        console.log(columns);
-        this.initCurrent(["NAME", "DBNAME", "EXIST", "DATA TYPE", "IS_NULLABLE", "DBNAME", "EXIST", "DATA TYPE", "IS_NULLABLE"], columnDiff, "", "COLUMNS")
+        bus.$emit("showColumn", columns);
       },
 
       /* Sort function, when you click the table header,table will be sorted by the alphabet order */
@@ -113,7 +102,8 @@
         this.current.body.sort(function (a, b) {
           return self.current.sortDir == 1 ? a[index] > b[index] : a[index] < b[index]
         })
-      },
+      }
+      ,
 
       /* Item click event, it will check the current type to decide how to handle it*/
       itemClick: function (index) {
@@ -165,7 +155,8 @@
             code2: code2
           });
         }
-      },
+      }
+      ,
       colClick: function (rowindex, colindex) {
         if (this.current.type == "TABLES") {
           var name = this.tableDiff[rowindex][0];
@@ -222,8 +213,10 @@
             self.showTableDiff();
         }
       }
-    },
-    mounted() {
+    }
+    ,
+    mounted()
+    {
       var self = this;
 
       /* Listen for events*/

@@ -1,6 +1,6 @@
 <template>
   <div id="code-compare">
-    <button type="button" class="btn btn-default btn-close" @click="close">CLOSE</button>
+    <button type="button" class="btn btn-default btn-close" @click="close"> &times;</button>
     <div class="half left">
       <h2 class="title">{{ dbname1 }} - {{ childname1 }}</h2>
       <div class="code-block code1">
@@ -27,21 +27,28 @@
       }
     },
     methods: {
+
+      /* Show the page and highlight the codes */
       showCode: function () {
-        $("#code-compare").css("display", "block").animate({height:'100%'},500);
+        $("#code-compare").css("display", "block").animate({height: '100%'}, 500);
         SyntaxHighlighter.highlight();
       },
-      close:function(){
-        $("#code-compare").animate({height:'0'},500,function(){
-            $(this).css("display", "none");
+
+      /* Close the page, set the display to none */
+      close: function () {
+        $("#code-compare").animate({height: '0'}, 500, function () {
+          $(this).css("display", "none");
         });
       }
     },
     mounted() {
+      /* Render the Html to highlight the code when window loaded */
       SyntaxHighlighter.config.clipboardSwf = 'scripts/clipboard.swf';
       SyntaxHighlighter.all();
 
       var self = this;
+
+      /* Listen for events */
       bus.$on("showCode", function (data) {
         console.log("[ EVENT ] - showCode", data);
         self.dbname1 = data.dbname1;
@@ -53,33 +60,77 @@
         self.showCode();
       });
 
-      $(document).ready(function(){
-        $("html").niceScroll({styler:"fb",cursorcolor:"rgb(16, 167, 175)", cursorwidth: '0', cursorborderradius: '10px', background: '#424f63', spacebarenabled:false, cursorborder: '0',  zindex: '1000'});
-        $(".code-block").niceScroll({styler:"fb",cursorcolor:"rgb(201,201,201)", cursorwidth: '0', cursorborderradius: '0',autohidemode: 'true', background: '#1B2426', spacebarenabled:false, cursorborder: '0'});
+      /* Change the scroll style */
+      $(document).ready(function () {
+        $(".code-block").niceScroll({
+          styler: "fb",
+          cursorcolor: "rgb(201,201,201)",
+          cursorwidth: '0',
+          cursorborderradius: '0',
+          autohidemode: 'true',
+          background: '#1B2426',
+          spacebarenabled: false,
+          cursorborder: '0'
+        });
       });
     },
-    updated() {
-    }
   }
 </script>
 
 <style scoped>
+
+  /* Close button */
+  .btn-close {
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    position: absolute;
+    right: -70px;
+    top: -70px;
+    color: white;
+    border: none;
+    background: gray;
+    padding: 15px 30px 20px 0;
+    font-size: 80px;
+    opacity: 0.5;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    -ms-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    transition: all 0.5s;
+    /*right: 2.5%;*/
+    /*top: 10px;*/
+  }
+
+  .btn-close:hover {
+    right:-50px;
+    top:-50px;
+    opacity: 1;
+  }
+
+  .btn-close:focus,
+  .btn-close:active:focus,
+  .btn-close.active:focus,
+  .btn-close.focus,
+  .btn-close:active.focus,
+  .btn-close.active.focus {
+    outline: none;
+  }
+
+  /* Main page */
   #code-compare {
     width: 100%;
     height: 0;
     position: fixed;
     top: 0;
     left: 0;
-    background: white;
+    background: #1B2426;
     z-index: 1000;
     display: none;
   }
 
-  .btn-close{
-    position: absolute;
-    right:2.5%;
-    top:10px;
-  }
   .half {
     width: 50%;
     height: 100%;
@@ -95,6 +146,7 @@
     text-align: center;
     height: 30px;
     margin: 20px 0 10px;
+    color: #5BA1CF;
   }
 
   /* code block */
