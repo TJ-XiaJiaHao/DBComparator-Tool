@@ -5,11 +5,11 @@
     <table class="table table-hover">
       <thead>
       <tr>
-        <th class="tb-head" v-for="(item,index) in current.header" @click="sort(index)">{{ item }}</th>
+        <th class="tb-head" v-for="(item,index) in current.header" @click="sort(index)" title="click to sort the table">{{ item }}</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(row,rowIndex) in current.body" @click="itemClick(rowIndex)">
+      <tr v-bind:class="{'tb-row':current.type != 'TABLES'}" v-for="(row,rowIndex) in current.body" @click="itemClick(rowIndex)">
         <td v-for="(col,colIndex) in row" v-bind:title="current.tooltip">{{ col }}</td>
       </tr>
       </tbody>
@@ -22,8 +22,8 @@
   import codeCompare from "@/components/CodeCompare"
   export default {
     name: 'DBInput',
-    components:{
-        codeCompare:codeCompare
+    components: {
+      codeCompare: codeCompare
     },
     data () {
       return {
@@ -72,13 +72,13 @@
         else this.isNoItems = false;
       },
       showTableDiff: function () {
-        this.initCurrent(["NAME", "COEXIST", "BELONG", "COLUMNS", "INDEXES", "KEYS"], this.tableDiff,"", "TABLES")
+        this.initCurrent(["NAME", "COEXIST", "BELONG", "COLUMNS", "INDEXES", "KEYS"], this.tableDiff, "", "TABLES")
       },
       showProcedureDiff: function () {
-        this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.procedureDiff,"click to view differences", "PROCEDURES")
+        this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.procedureDiff, "click to view differences", "PROCEDURES")
       },
       showFunctionDiff: function () {
-        this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.functionDiff,"click to view differences", "FUNCTIONS")
+        this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.functionDiff, "click to view differences", "FUNCTIONS")
       },
 
       /* Sort function, when you click the table header,table will be sorted by the alphabet order */
@@ -92,7 +92,54 @@
 
       /* Item click event, it will check the current type to decide how to handle it*/
       itemClick: function (index) {
-          bus.$emit("showCode",{dbname1:"a",dbname2:"b",childname1:"c",childname2:"d",code1:"e",code2:"f"});
+        if (this.current.type == "PROCEDURES") {
+          var name = this.procedureDiff[index][0];
+          var pos = 0;
+          for(var i = 0; i < this.data.storedProcedures.length;i++){
+              if(this.data.storedProcedures[i].name == name){
+                  pos = i;
+                  break;
+              }
+          }
+          var dbname1 = this.data.storedProcedures[pos].different[0].dbname;
+          var dbname2 = this.data.storedProcedures[pos].different[1].dbname;
+          var producerName1 = this.data.storedProcedures[pos].different[0].name;
+          var producerName2 = this.data.storedProcedures[pos].different[1].name;
+          var code1 = this.data.storedProcedures[pos].different[0].statements;
+          var code2 = this.data.storedProcedures[pos].different[1].statements;
+          bus.$emit("showCode", {
+            dbname1: dbname1,
+            dbname2: dbname2,
+            childname1: producerName1,
+            childname2: producerName2,
+            code1: code1,
+            code2: code2
+          });
+        }
+        else if (this.current.type == "FUNCTIONS") {
+          var name = this.functionDiff[index][0];
+          var pos = 0;
+          for(var i = 0; i < this.data.functions.length;i++){
+            if(this.data.functions[i].name == name){
+              pos = i;
+              break;
+            }
+          }
+          var dbname1 = this.data.functions[pos].different[0].dbname;
+          var dbname2 = this.data.functions[pos].different[1].dbname;
+          var functionName1 = this.data.functions[pos].different[0].name;
+          var functionName2 = this.data.functions[pos].different[1].name;
+          var code1 = this.data.functions[pos].different[0].statements;
+          var code2 = this.data.functions[pos].different[1].statements;
+          bus.$emit("showCode", {
+            dbname1: dbname1,
+            dbname2: dbname2,
+            childname1: functionName1,
+            childname2: functionName2,
+            code1: code1,
+            code2: code2
+          });
+        }
       }
     },
     watch: {
@@ -188,5 +235,9 @@
 
   .tb-head {
     text-align: center;
+    cursor:default;
+  }
+  .tb-row{
+    cursor:pointer;
   }
 </style>
