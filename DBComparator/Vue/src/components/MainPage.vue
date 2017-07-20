@@ -16,7 +16,7 @@
       <tr v-bind:class="{'tb-row':(current.type == 'PROCEDURES' || current.type == 'FUNCTIONS')}"
           v-for="(row,rowIndex) in current.body"
           @click="itemClick(rowIndex)">
-        <td v-for="(col,colIndex) in row" v-bind:title="current.tooltip" @click="colClick(rowIndex,colIndex)">{{ col
+        <td v-bind:class="{'red':(typeof col == 'boolean' && col == 0) || (typeof col != 'boolean' && col > 0),'pointer':current.type == 'TABLES' && colIndex > 2}" v-for="(col,colIndex) in row" v-bind:title="current.tooltip" @click="colClick(rowIndex,colIndex)">{{ col
           }}
         </td>
       </tr>
@@ -322,5 +322,16 @@
 
   .tb-row {
     cursor: pointer;
+  }
+
+  .red{
+    color:red;
+    font-weight:bold;
+  }
+  .pointer{
+    cursor:pointer;
+  }
+  .pointer:hover{
+    border:1px solid black;
   }
 </style>

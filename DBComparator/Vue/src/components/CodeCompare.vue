@@ -30,14 +30,22 @@
 
       /* Show the page and highlight the codes */
       showCode: function () {
-        $("#code-compare").css("display", "block").animate({height: '100%'}, 500);
+        $("#code-compare").css("display", "block").animate({height: '100%'}, 500, function () {
+          $(".code-block").animate({marginTop: '0', opacity: '1'}, 1000);
+          $(".left .title").animate({marginLeft: '0', opacity: '1'}, 1000);
+          $(".right .title").animate({marginLeft: '0', opacity: '1'}, 1000);
+        });
         SyntaxHighlighter.highlight();
       },
 
       /* Close the page, set the display to none */
       close: function () {
+        $(".left .title").animate({marginLeft: '-30px', opacity: '0'}, 500);
+        $(".right .title").animate({marginLeft: '30px', opacity: '0'}, 500);
+        $(".code-block").animate({marginTop: '30px', opacity: '0'}, 500);
         $("#code-compare").animate({height: '0'}, 500, function () {
           $(this).css("display", "none");
+          $(".code-block").css("marginTop","30px").css("opacity","0");
         });
       }
     },
@@ -92,8 +100,7 @@
     color: white;
     border: none;
     background: gray;
-    padding: 15px 30px 20px 0;
-    font-size: 80px;
+    font-size: 70px;
     opacity: 0.5;
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
@@ -105,9 +112,10 @@
   }
 
   .btn-close:hover {
-    right:-50px;
-    top:-50px;
+    right: -50px;
+    top: -50px;
     opacity: 1;
+    padding: 20px 30px 20px 0;
   }
 
   .btn-close:focus,
@@ -147,6 +155,13 @@
     height: 30px;
     margin: 20px 0 10px;
     color: #5BA1CF;
+    opacity:0;
+  }
+  .left .title{
+    margin-left:-30px;
+  }
+  .right .title{
+    margin-left:30px;
   }
 
   /* code block */
@@ -156,5 +171,7 @@
     margin: 2.5% 5%;
     background: #1B2426;
     overflow-Y: scroll;
+    margin-top:30px;
+    opacity:0;
   }
 </style>

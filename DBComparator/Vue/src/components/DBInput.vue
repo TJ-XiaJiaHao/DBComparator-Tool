@@ -83,20 +83,25 @@
       /* DBInput IN and OUT animation*/
       hideDBInput: function () {
         var dbInput = $("#db-input");
-        dbInput.animate({paddingTop: '30px', opacity: 0}, 1000, function () {
+        dbInput.animate({paddingTop: '30px', opacity: 0}, 500, function () {
           dbInput.css("display", "none");
           bus.$emit("showHeader", "COMPARING...");
         })
       },
-      showDBInput: function () {
+      showDBInput: function (callback) {
         var dbInput = $("#db-input");
         dbInput.css("display", "block");
-        dbInput.animate({paddingTop: '50px', opacity: 1}, 1000);
+        dbInput.animate({paddingTop: '50px', opacity: 1}, 1000,function(){
+            console.log(callback);
+            if(callback != null) callback();
+        });
       }
     },
     mounted() {
       var self = this;
-
+      self.showDBInput(function(){
+        toastr.success("Welcome to DBComparator!");
+      });
       bus.$on("showDBInput", function (data) {
         console.log("[ EVENT ] - showDBInput");
         self.showDBInput();
@@ -114,7 +119,6 @@
           showMethod: 'slideDown',
           timeOut: 4000
         };
-        toastr.success("Welcome to DBComparator!");
       };
     }
   }
@@ -127,9 +131,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    padding-top: 50px;
     background: white;
     z-index: 200;
+    padding-top:30px;
+    opacity:0;
+    display:none;
   }
 
   .db-input-div {
