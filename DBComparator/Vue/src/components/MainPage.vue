@@ -2,6 +2,7 @@
   <div id="main">
     <code-compare></code-compare>
     <col-compare></col-compare>
+    <ik-compare></ik-compare>
     <h4 v-if="isNoItems">no items are different</h4>
     <table class="table table-hover">
       <thead>
@@ -28,11 +29,13 @@
   import bus from "../assets/eventBus"
   import codeCompare from "@/components/CodeCompare"
   import colCompare from "@/components/ColumnCompare"
+  import ikCompare from "@/components/ikCompare"
   export default {
     name: 'DBInput',
     components: {
       codeCompare: codeCompare,
-      colCompare: colCompare
+      colCompare: colCompare,
+      ikCompare: ikCompare
     },
     data () {
       return {
@@ -57,6 +60,7 @@
       },
       hideTable: function () {
         $("#main").animate({paddingLeft: '100px', opacity: '0'}, 0);
+        bus.$emit("hideIK","");
       },
 
       /* Clear all the data */
@@ -90,9 +94,28 @@
         this.initCurrent(["NAME", "COEXIST", "DBNAME", "EXIST", "DBNAME", "EXIST"], this.functionDiff, "click to view differences", "FUNCTIONS")
       },
       showColumnDiff: function (index) {
-        if (this.data.tables[index].columns.length == 0)return;
+        if (this.data.tables[index].columns.length == 0) {
+          toastr.info("There is no difference!")
+          return;
+        }
         var columns = this.data.tables[index].columns;
         bus.$emit("showColumn", columns);
+      },
+      showIndexes: function (index) {
+        var indexes = this.data.tables[index].indexes;
+        if (indexes.length == 0) {
+          toastr.info("There is no difference!");
+          return;
+        }
+        bus.$emit("showIndexes", indexes);
+      },
+      showKeys: function (index) {
+        var keys = this.data.tables[index].keys;
+        if(keys.length == 0){
+            toastr.info("There is no difference!");
+            return;
+        }
+        bus.$emit("showKeys",keys);
       },
 
       /* Sort function, when you click the table header,table will be sorted by the alphabet order */
@@ -104,6 +127,17 @@
         })
       }
       ,
+      /* Count the different objects */
+      countDiff: function (list1, list2) {
+        if (list1 == null && list2 == null)return 0;
+        if (list1 == null)return list2.length;
+        if (list2 == null)return list1.length;
+        var coexist = 0;
+        for (var i = 0; i < list1.length; i++) {
+          if (list2.indexOf(list1[i]) >= 0) coexist += 1;
+        }
+        return list1.length + list2.length - coexist;
+      },
 
       /* Item click event, it will check the current type to decide how to handle it*/
       itemClick: function (index) {
@@ -155,8 +189,7 @@
             code2: code2
           });
         }
-      }
-      ,
+      },
       colClick: function (rowindex, colindex) {
         if (this.current.type == "TABLES") {
           var name = this.tableDiff[rowindex][0];
@@ -169,6 +202,12 @@
           }
           if (colindex == 3) {
             this.showColumnDiff(pos);
+          }
+          else if (colindex == 4) {
+            this.showIndexes(pos);
+          }
+          else if (colindex == 5) {
+            this.showKeys(pos);
           }
         }
       }
@@ -183,7 +222,17 @@
         /* Refresh different tables information */
         for (var i = 0; i < newData.tables.length; i++) {
           var item = newData.tables[i];
-          self.tableDiff.push([item.name, item.coexist, item.dbnameIfNotCoexit, item.columns.length, item.indexes.length, item.keys.length]);
+          var indexesNum = 0;
+          var keysNum = 0;
+          if(item.indexes.length > 1){
+            indexesNum += self.countDiff(item.indexes[0].indexes,item.indexes[1].indexes);
+          }
+          if(item.keys.length > 1){
+            keysNum += self.countDiff(item.keys[0].foreignKeys,item.keys[1].foreignKeys);
+            keysNum += self.countDiff(item.keys[0].primaryKeys,item.keys[1].primaryKeys);
+          }
+
+          self.tableDiff.push([item.name, item.coexist, item.dbnameIfNotCoexit, item.columns.length, indexesNum, keysNum]);
         }
 
         /* Refresh different procedures information */
