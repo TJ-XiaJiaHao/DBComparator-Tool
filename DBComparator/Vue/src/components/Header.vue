@@ -28,6 +28,10 @@
       return {
         server1: "",
         server2: "",
+        username1: "",
+        username2: "",
+        password1: "",
+        password2: "",
         dbname1: "",
         dbname2: "",
         status: 'COMPARING...',
@@ -47,8 +51,27 @@
       },
 
       /* Access the back-end to get the differences between two databases */
+      getURL: function () {
+        var url = global.host + "/api/DBComparator?";
+        if (this.username1 == "" && this.password1 == "" && this.username2 == "" && this.password2 == "") {
+          url += "server1=" + this.server1 + "&dbname1=" + this.dbname1 + "&server2=" + this.server2 + "&dbname2=" + this.dbname2;
+        }
+        else if (this.username1 != "" && this.password1 != "" && this.username2 != "" && this.password2 != "") {
+          url += "server1=" + this.server1 + "&dbname1=" + this.dbname1 + "&username1=" + this.username1 + "&password1=" + this.password1 +
+            "&server2=" + this.server2 + "&dbname2=" + this.dbname2 + "&username2=" + this.username2 + "&password2=" + this.password2;
+        }
+        else if(this.username1 =="" && this.password1 == "" && this.username2 != "" && this.password2 != ""){
+            url += "server1=" + this.server2 + "&dbname1=" + this.dbname2 + "&username1=" + this.username2 + "&password1=" + this.password2 +
+              "&server2=" + this.server1 + "&dbname2=" + this.dbname1;
+        }
+        else if(this.username1 !="" && this.password1 != "" && this.username2 == "" && this.password2 == ""){
+          url += "server1=" + this.server1 + "&dbname1=" + this.dbname1 + "&username1=" + this.username1 + "&password1=" + this.password1 +
+            "&server2=" + this.server2 + "&dbname2=" + this.dbname2;
+        }
+        return url;
+      },
       compareDatabases: function (callback) {
-        var url = global.host + "/api/DBComparator?server1=" + this.server1 + "&dbname1=" + this.dbname1 + "&server2=" + this.server2 + "&dbname2=" + this.dbname2;
+        var url = this.getURL();
         console.log("[ GET ] - " + url);
         this.clear();
         var self = this;
@@ -104,11 +127,11 @@
         });
         bus.$emit("hideTable", "");
       },
-      selectedChange:function(){
-        switch (this.selected){
+      selectedChange: function () {
+        switch (this.selected) {
           case "TABLES":
             this.status = "TABLES";
-            bus.$emit("showTableDiff","");
+            bus.$emit("showTableDiff", "");
             break;
           case "PROCEDURES":
             this.status = "PROCEDURES";
@@ -134,6 +157,10 @@
       bus.$on("compareDB", function (data) {
         self.server1 = data.server1;
         self.server2 = data.server2;
+        self.username1 = data.username1;
+        self.username2 = data.username2;
+        self.password1 = data.password1;
+        self.password2 = data.password2;
         self.dbname1 = data.dbname1;
         self.dbname2 = data.dbname2;
         self.compareDatabases();

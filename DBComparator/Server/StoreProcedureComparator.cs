@@ -120,6 +120,7 @@ namespace DBComparator.Server
             // get stored procedures statements
             foreach (string item in proceduerNames)
             {
+                //if (pros.Count() > 23) break;       ////////////////////////////////////////////////
                 string commandStat = "select text from syscomments where id=object_id('" + item + "')";
                 SqlDataReader drStat = SqlServer.ExcuteSqlCommandReader(commandStat, connection);
 

@@ -56,6 +56,7 @@ namespace DBComparator.Server
             // Get the coeixt tables in database1 and database2 
             foreach (string item in tables1.Intersect(tables2))
             {
+                //if (rtnTables.Count() > 23) break;  ///////////////////////// page??????
                 Table table = new Table(item, true, "");
                 table.columns = compareColumns(conn1, conn2, item);
                 table.indexes = compareIndexs(conn1, conn2, item);

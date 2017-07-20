@@ -19,6 +19,19 @@
                    data-container="body" data-toggle="popover" data-placement="right" v-model="dbname1">
           </div>
         </div>
+        <div class="form-group">
+          <div class="col-sm-6">
+            <input type="text" class="form-control input-lg db-input-text" id="db-username-one" placeholder="username"
+                   title="don't need if you connect to the local sql server with windows authentication"
+                   data-container="body" data-toggle="popover" data-placement="left" v-model="username1"/>
+          </div>
+          <div class="col-sm-6">
+            <input type="password" class="form-control input-lg db-input-text" id="db-password-one"
+                   placeholder="password"
+                   title="don't need if you connect to the local sql server with windows authentication"
+                   data-container="body" data-toggle="popover" data-placement="right" v-model="password1"/>
+          </div>
+        </div>
       </form>
       <h1 class="db-input-title">DATABASE TWO</h1>
       <form class="form-horizontal db-input-form" role="form">
@@ -34,6 +47,18 @@
             <input type="text" class="form-control input-lg db-input-text" id="db-name-two" placeholder="database name"
                    title="please input the database name you want to compare"
                    data-container="body" data-toggle="popover" data-placement="right" v-model="dbname2">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-6">
+            <input type="text" class="form-control input-lg db-input-text" id="db-username-two" placeholder="username"
+                   title="don't need if you connect to the local sql server with windows authentication"
+                   data-container="body" data-toggle="popover" data-placement="left" v-model="username2"/>
+          </div>
+          <div class="col-sm-6">
+            <input type="text" class="form-control input-lg db-input-text" id="db-password-two" placeholder="password"
+                   title="don't need if you connect to the local sql server with windows authentication"
+                   data-container="body" data-toggle="popover" data-placement="right" v-model="password2"/>
           </div>
         </div>
       </form>
@@ -52,8 +77,12 @@
       return {
         server1: "",
         dbname1: "",
+        username1: "",
+        password1: "",
         server2: "",
-        dbname2: ""
+        dbname2: "",
+        username2: "",
+        password2: ""
       }
     },
     methods: {
@@ -61,8 +90,16 @@
       /* Check if the databases information equals null or "" */
       check: function () {
         if (this.server1 == "" || this.server2 == "" || this.dbname1 == "" || this.dbname2 == "") {
-          toastr.error("null input are not be allowed!")
+          toastr.error("server name and database name should not be empty !")
           return false;
+        }
+        if ((this.username1 == "" && this.password1 != "") || (this.username1 != "" && this.password1 == "")) {
+          toastr.error("username and password should all be empty or all be not empty !");
+          return;
+        }
+        if ((this.username2 == "" && this.password2 != "") || (this.username2 != "" && this.password2 == "")) {
+          toastr.error("username and password should all be empty or all be not empty !");
+          return;
         }
         return true;
       },
@@ -74,8 +111,12 @@
         bus.$emit("compareDB", {
           server1: this.server1,
           dbname1: this.dbname1,
+          username1: this.username1,
+          password1: this.password1,
           server2: this.server2,
-          dbname2: this.dbname2
+          dbname2: this.dbname2,
+          username2: this.username2,
+          password2: this.password2
         });
         this.hideDBInput();
       },
@@ -91,15 +132,15 @@
       showDBInput: function (callback) {
         var dbInput = $("#db-input");
         dbInput.css("display", "block");
-        dbInput.animate({paddingTop: '50px', opacity: 1}, 1000,function(){
-            console.log(callback);
-            if(callback != null) callback();
+        dbInput.animate({paddingTop: '0px', opacity: 1}, 1000, function () {
+          console.log(callback);
+          if (callback != null) callback();
         });
       }
     },
     mounted() {
       var self = this;
-      self.showDBInput(function(){
+      self.showDBInput(function () {
         toastr.success("Welcome to DBComparator!");
       });
       bus.$on("showDBInput", function (data) {
@@ -108,10 +149,14 @@
       })
 
       window.onload = function () {
-        $("#servername-one").tooltip();
-        $("#servername-two").tooltip();
         $("#db-name-one").tooltip();
         $("#db-name-two").tooltip();
+        $("#servername-one").tooltip();
+        $("#servername-two").tooltip();
+        $("#db-username-one").tooltip();
+        $("#db-username-two").tooltip();
+        $("#db-password-one").tooltip();
+        $("#db-password-two").tooltip();
 
         toastr.options = {
           closeButton: true,
@@ -119,6 +164,18 @@
           showMethod: 'slideDown',
           timeOut: 4000
         };
+
+        /* Change the scroll style */
+        $("#db-input").niceScroll({
+          styler: "fb",
+          cursorcolor: "rgb(201,201,201)",
+          cursorwidth: '0',
+          cursorborderradius: '0',
+          autohidemode: 'true',
+          background: '#1B2426',
+          spacebarenabled: false,
+          cursorborder: '0'
+        });
       };
     }
   }
@@ -133,13 +190,10 @@
     height: 100%;
     background: white;
     z-index: 200;
-    padding-top:30px;
-    opacity:0;
-    display:none;
-  }
-
-  .db-input-div {
-    height: 800px;
+    opacity: 0;
+    padding-top: 30px;
+    display: none;
+    overflow: scroll;
   }
 
   .db-input-title {
@@ -149,7 +203,7 @@
   }
 
   .db-input-form {
-    margin: 40px 0 50px;
+    margin: 20px 0 30px;
   }
 
   .btn-compare-div {
