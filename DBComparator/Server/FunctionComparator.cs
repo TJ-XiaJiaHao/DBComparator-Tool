@@ -29,7 +29,7 @@ namespace DBComparator.Server
             return funDiff;
         }
 
-        private List<FunctionDiff> getDiffFunctions(List<Function> functions1, List<Function> functions2,string dbname1,string dbname2)
+        private List<FunctionDiff> getDiffFunctions(List<Function> functions1, List<Function> functions2, string dbname1, string dbname2)
         {
             // Logger
             DateTime start = DateTime.Now;
@@ -111,24 +111,18 @@ namespace DBComparator.Server
             List<Function> rtn = new List<Function>();
 
             // get function names
-            List<string> functionNames = new List<string>();
-            string command = "select name from sys.objects WHERE type = 'FN'";
+            List<DBFunctions> dbfunctions = new List<DBFunctions>();
+            string command = "select name,text from sys.objects  a join sys.syscomments b on a.object_id = b.id where type='FN'";
             SqlDataReader dr = SqlServer.ExcuteSqlCommandReader(command, connection);
             while (dr.Read())
             {
-                functionNames.Add(dr[0].ToString());
+                dbfunctions.Add(new DBFunctions() { name = dr[0].ToString(), statement = dr[1].ToString() });
             }
-
-            // get function statements
-            foreach (string item in functionNames)
+            foreach (DBFunctions dbfunction in dbfunctions)
             {
-                string commandStat = "select text from sys.syscomments where id = OBJECT_ID('" + item + "')";
-                SqlDataReader drStat = SqlServer.ExcuteSqlCommandReader(commandStat, connection);
-
-                drStat.Read();
-                Function fun = new Function(connection.Database, item, drStat[0].ToString(), true);
-                rtn.Add(fun);
+                rtn.Add(new Function(connection.Database, dbfunction.name, dbfunction.statement, true));
             }
+
 
             // Logger
             DateTime end = DateTime.Now;

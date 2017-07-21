@@ -61,16 +61,23 @@ namespace DBComparator.Server
 
 
             // Get the coeixt tables in database1 and database2 
+            List<Table> candidateTables = new List<Table>();
             foreach (string item in tables1.Intersect(tables2))
             {
-                //if (rtnTables.Count() > 23) break;  ///////////////////////// page??????
-                Table table = new Table(item, true, "");
-                table.columns = compareColumns(conn1, conn2, item);
-                table.indexes = compareIndexs(conn1, conn2, item);
-                table.keys = compareKeys(conn1, conn2, item);
-                if (table.columns.Count() != 0 && table.indexes.Count() != 0 && table.keys.Count() != 0) rtnTables.Add(table);
+                Table table = new Table(item, true, ""); 
+                candidateTables.Add(table);
             }
 
+
+            initDiffColumns(conn1, conn2, candidateTables);
+            initIndexes(conn1, conn2, candidateTables);
+            initKeys(conn1, conn2, candidateTables);
+            //table.indexes = compareIndexs(conn1, conn2, item);
+            //table.keys = compareKeys(conn1, conn2, item);
+            foreach (Table table in candidateTables)
+            {
+                if (table.columns.Count() != 0 || table.indexes.Count() != 0 || table.keys.Count() != 0) rtnTables.Add(table);
+            }
 
             // Logger
             DateTime end = DateTime.Now;
@@ -80,6 +87,50 @@ namespace DBComparator.Server
         }
 
 
+        public void initIndexes(SqlConnection conn1, SqlConnection conn2, List<Table> tables)
+        {
+
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ initIndexes ] - start time : " + start.ToString());
+
+            if (tables.Count() == 0) return;
+            List<DBIndexes> indexes1 = new List<DBIndexes>();
+            List<DBIndexes> indexes2 = new List<DBIndexes>();
+
+            string command = "SELECT  indexname = a.name , tablename = c. name , indexcolumns = d .name , a .indid " +
+                             "FROM    sysindexes a JOIN sysindexkeys b ON a .id = b .id  AND a .indid = b.indid " +
+                             "JOIN sysobjects c ON b .id = c .id " +
+                             "JOIN syscolumns d ON b .id = d .id  AND b .colid = d .colid " +
+                             "WHERE   a .indid NOT IN ( 0 , 255 )  " +
+                             "AND (c.name = '" + tables[0].name + "' ";
+            for(int i = 1; i < tables.Count(); i++){
+                command += " or c.name = '" + tables[i].name + "' ";
+            }
+            command += ") ORDER BY c. name , a.name , d.name";
+            SqlDataReader dr1 = SqlServer.ExcuteSqlCommandReader(command, conn1);
+            SqlDataReader dr2 = SqlServer.ExcuteSqlCommandReader(command, conn2);
+            while (dr1.Read())
+            {
+                indexes1.Add(new DBIndexes(dr1[0].ToString(), dr1[1].ToString()));
+            }
+            while (dr2.Read())
+            {
+                indexes2.Add(new DBIndexes(dr2[0].ToString(), dr2[1].ToString()));
+            }
+            foreach (Table table in tables)
+            {
+                List<DBIndexes> index1 = indexes1.Where(a => a.tbName == table.name).ToList();
+                List<DBIndexes> index2 = indexes2.Where(a => a.tbName == table.name).ToList();
+                table.indexes = compareIndexs(conn1.Database,conn2.Database,table.name,index1, index2);
+            }
+
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ initIndexes ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+        }
+
         /// <summary>
         /// Compare all the indexs information between two databases of one same table
         /// </summary>
@@ -87,7 +138,7 @@ namespace DBComparator.Server
         /// <param name="conn2"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        private List<Indexs> compareIndexs(SqlConnection conn1, SqlConnection conn2, string tableName)
+        private List<Indexs> compareIndexs(string dbname1,string dbname2,string tbname,List<DBIndexes> dbindexes1, List<DBIndexes> dbindexes2)
         {
 
             // Logger
@@ -95,28 +146,17 @@ namespace DBComparator.Server
             logger.Info("[ compareIndexs ] - start time : " + start.ToString());
 
             List<Indexs> rtn = new List<Indexs>();
-            Indexs indexs1 = new Indexs(conn1.Database, tableName);
-            Indexs indexs2 = new Indexs(conn2.Database, tableName);
+            Indexs indexs1 = new Indexs(dbname1, tbname);
+            Indexs indexs2 = new Indexs(dbname2, tbname);
 
-            string command = "SELECT  indexname = a.name , tablename = c. name , indexcolumns = d .name , a .indid " +
-                             "FROM    sysindexes a JOIN sysindexkeys b ON a .id = b .id  AND a .indid = b.indid " +
-                             "JOIN sysobjects c ON b .id = c .id " +
-                             "JOIN syscolumns d ON b .id = d .id  AND b .colid = d .colid " +
-                             "WHERE   a .indid NOT IN ( 0 , 255 )  " +
-                             "AND c .name = '" + tableName + "' " +
-                             "ORDER BY c. name , a.name , d.name";
-            SqlDataReader dr1 = SqlServer.ExcuteSqlCommandReader(command, conn1);
-            SqlDataReader dr2 = SqlServer.ExcuteSqlCommandReader(command, conn2);
-
-            while (dr1.Read())
+            foreach (DBIndexes dbindex in dbindexes1)
             {
-                // index name is the first element
-                indexs1.indexes.Add(dr1[0].ToString());
+                indexs1.indexes.Add(dbindex.indexName);
             }
-            while (dr2.Read())
+           foreach(DBIndexes dbindex in dbindexes2)
             {
                 // index name is the first element
-                indexs2.indexes.Add(dr2[0].ToString());
+                indexs2.indexes.Add(dbindex.indexName);
             }
 
             if (!indexs1.compare(indexs2))
@@ -133,6 +173,50 @@ namespace DBComparator.Server
             return rtn;
         }
 
+
+        public void initKeys(SqlConnection conn1, SqlConnection conn2, List<Table> tables)
+        {
+
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ initKeys ] - start time : " + start.ToString());
+
+            if (tables.Count() == 0) return;
+            List<DBKeys> keys1 = new List<DBKeys>();
+            List<DBKeys> keys2 = new List<DBKeys>();
+            string command = "SELECT t.TABLE_NAME, t.CONSTRAINT_TYPE, c.COLUMN_NAME " +
+                                "FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS t,INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS c " +
+                                "WHERE t.CONSTRAINT_NAME = c.CONSTRAINT_NAME AND (OBJECT_ID(t.TABLE_NAME) = OBJECT_ID('" + tables[0].name + "') ";
+            for (int i = 1; i < tables.Count(); i++)
+            {
+                command += " or OBJECT_ID(t.TABLE_NAME) = OBJECT_ID('" + tables[i].name + "') ";
+            }
+            command += ")";
+            SqlDataReader dr1 = SqlServer.ExcuteSqlCommandReader(command, conn1);
+            SqlDataReader dr2 = SqlServer.ExcuteSqlCommandReader(command, conn2);
+            while (dr1.Read())
+            {
+                keys1.Add(new DBKeys() { tbname = dr1[0].ToString(), constType = dr1[1].ToString(), colName = dr1[2].ToString() });
+            }
+            while (dr2.Read())
+            {
+                keys2.Add(new DBKeys() { tbname = dr2[0].ToString(), constType = dr2[1].ToString(), colName = dr2[2].ToString() });
+            }
+
+            foreach (Table table in tables)
+            {
+                List<DBKeys> key1 = keys1.Where(a => a.tbname == table.name).ToList();
+                List<DBKeys> key2 = keys2.Where(a => a.tbname == table.name).ToList();
+                table.keys = compareKeys(conn1.Database, conn2.Database, table.name, key1, key2);
+            }
+
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ initKeys ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+        }
+
+
         /// <summary>
         /// Compare all the Keys information between two databases of one same table
         /// </summary>
@@ -140,7 +224,7 @@ namespace DBComparator.Server
         /// <param name="conn2"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        private List<Key> compareKeys(SqlConnection conn1, SqlConnection conn2, string tableName)
+        private List<Key> compareKeys(string dbname1,string dbname2,string tbname,List<DBKeys> dbkeys1,List<DBKeys> dbkeys2) 
         {
 
             // Logger
@@ -148,40 +232,32 @@ namespace DBComparator.Server
             logger.Info("[ compareKeys ] - start time : " + start.ToString());
 
             List<Key> rtn = new List<Key>();
-            Key key1 = new Key(conn1.Database, tableName);
-            Key key2 = new Key(conn2.Database, tableName);
-
-            // Excute command to get the primaryKey and foreignKey information of a table
-            string command = "SELECT t.TABLE_NAME, t.CONSTRAINT_TYPE, c.COLUMN_NAME " +
-                                "FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS t,INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS c " +
-                                "WHERE t.CONSTRAINT_NAME = c.CONSTRAINT_NAME AND OBJECT_ID(t.TABLE_NAME) = OBJECT_ID('" + tableName + "')";
-            SqlDataReader dr1 = SqlServer.ExcuteSqlCommandReader(command, conn1);
-            SqlDataReader dr2 = SqlServer.ExcuteSqlCommandReader(command, conn2);
-
-            while (dr1.Read())
+            Key key1 = new Key(dbname1, tbname);
+            Key key2 = new Key(dbname2, tbname);
+            foreach(DBKeys key in dbkeys1)
             {
                 // dr[1] means the type of the key
-                string type = dr1[1].ToString();
+                string type = key.constType;
                 switch (type)
                 {
                     case "FOREIGN KEY":
-                        key1.foreignKeys.Add(dr1[2].ToString());
+                        key1.foreignKeys.Add(key.colName);
                         break;
                     case "PRIMARY KEY":
-                        key1.primaryKeys.Add(dr1[2].ToString());
+                        key1.primaryKeys.Add(key.colName);
                         break;
                 }
             }
-            while (dr2.Read())
+            foreach (DBKeys key in dbkeys2)
             {
-                string type = dr2[1].ToString();
+                string type = key.constType;
                 switch (type)
                 {
                     case "FOREIGN KEY":
-                        key2.foreignKeys.Add(dr2[2].ToString());
+                        key2.foreignKeys.Add(key.colName);
                         break;
                     case "PRIMARY KEY":
-                        key2.primaryKeys.Add(dr2[2].ToString());
+                        key2.primaryKeys.Add(key.colName);
                         break;
                 }
             }
@@ -199,6 +275,83 @@ namespace DBComparator.Server
             return rtn;
         }
 
+
+
+        /// <summary>
+        /// Init the different columns information in the tables list
+        /// </summary>
+        /// <param name="conn1"></param>
+        /// <param name="conn2"></param>
+        /// <param name="tables"></param>
+        private void initDiffColumns(SqlConnection conn1, SqlConnection conn2, List<Table> tables)
+        {
+
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ initDiffColumns ] - start time : " + start.ToString());
+
+            if (tables.Count() == 0) return;
+            List<DBColumns> dbColumns1 = new List<DBColumns>();
+            List<DBColumns> dbColumns2 = new List<DBColumns>();
+
+            // Excute sql command to get all the columns information of all tables
+            string command = "SELECT TABLE_NAME,COLUMN_NAME,COLUMN_DEFAULT,IS_NULLABLE,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,CHARACTER_OCTET_LENGTH,NUMERIC_PRECISION,NUMERIC_PRECISION_RADIX,NUMERIC_SCALE FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME='" + tables[0].name + "' ";
+            for (int i = 1; i < tables.Count(); i++)
+            {
+                command += " OR TABLE_NAME='" + tables[i].name + "' ";
+            }
+
+            SqlDataReader dr1 = SqlServer.ExcuteSqlCommandReader(command, conn1);
+            SqlDataReader dr2 = SqlServer.ExcuteSqlCommandReader(command, conn2);
+
+            while (dr1.Read())
+            {
+                dbColumns1.Add(new DBColumns()
+                {
+                    tbName = dr1[0].ToString(),
+                    colName = dr1[1].ToString(),
+                    colDefault = dr1[2].ToString(),
+                    isNullable = dr1[3].ToString(),
+                    dataType = dr1[4].ToString(),
+                    charMaxLen = dr1[5].ToString(),
+                    charOctetLen = dr1[6].ToString(),
+                    numericPrecision = dr1[7].ToString(),
+                    numericPrecisionRadix = dr1[8].ToString(),
+                    numericScale = dr1[9].ToString()
+                });
+            } 
+            while (dr2.Read())
+            {
+                dbColumns2.Add(new DBColumns()
+                {
+                    tbName = dr2[0].ToString(),
+                    colName = dr2[1].ToString(),
+                    colDefault = dr2[2].ToString(),
+                    isNullable = dr2[3].ToString(),
+                    dataType = dr2[4].ToString(),
+                    charMaxLen = dr2[5].ToString(),
+                    charOctetLen = dr2[6].ToString(),
+                    numericPrecision = dr2[7].ToString(),
+                    numericPrecisionRadix = dr2[8].ToString(),
+                    numericScale = dr2[9].ToString()
+                });
+            }
+
+            foreach (Table table in tables)
+            {
+                string tbname = table.name;
+                List<DBColumns> columns1 = dbColumns1.Where(a => a.tbName == tbname).ToList();
+                List<DBColumns> columns2 = dbColumns2.Where(a => a.tbName == tbname).ToList();
+                table.columns = compareColumns(conn1.Database, conn2.Database, columns1, columns2);
+            }
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ initDiffColumns ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+
+            return;
+        }
+
         /// <summary>
         /// Compare all the columns information between two databases of one same table 
         /// </summary>
@@ -206,25 +359,20 @@ namespace DBComparator.Server
         /// <param name="conn2"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        private List<ColumnDiff> compareColumns(SqlConnection conn1, SqlConnection conn2, string tableName)
+        private List<ColumnDiff> compareColumns(string dbname1,string dbname2,List<DBColumns> columns1,List<DBColumns> columns2)
         {
-
             // Logger
             DateTime start = DateTime.Now;
             logger.Info("[ compareColumns ] - start time : " + start.ToString());
 
+
             List<ColumnDiff> columns = new List<ColumnDiff>();
 
-            // Excute sql command to get all the columns information of a table
-            string command = "SELECT COLUMN_NAME,COLUMN_DEFAULT,IS_NULLABLE,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,CHARACTER_OCTET_LENGTH,NUMERIC_PRECISION,NUMERIC_PRECISION_RADIX,NUMERIC_SCALE FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME='" + tableName + "' ";
-            SqlDataReader dr1 = SqlServer.ExcuteSqlCommandReader(command, conn1);
-            SqlDataReader dr2 = SqlServer.ExcuteSqlCommandReader(command, conn2);
-
-            List<Column> cols1 = readColumns(conn1.Database, dr1);
-            List<Column> cols2 = readColumns(conn2.Database, dr2);
+            List<Column> cols1 = readColumns(dbname1, columns1);
+            List<Column> cols2 = readColumns(dbname2, columns2);
 
             // get and delete not coexit columns
-            foreach (ColumnDiff item in getAndDeleteNoCoexitColumns(cols1, cols2, conn1.Database, conn2.Database))
+            foreach (ColumnDiff item in getAndDeleteNoCoexitColumns(cols1, cols2, dbname1, dbname2))
             {
                 columns.Add(item);
             }
@@ -347,7 +495,7 @@ namespace DBComparator.Server
         /// <param name="dbname"></param>
         /// <param name="dr"></param>
         /// <returns></returns>
-        private List<Column> readColumns(string dbname, SqlDataReader dr)
+        private List<Column> readColumns(string dbname, List<DBColumns> dbColumns)
         {
 
             // Logger
@@ -356,18 +504,18 @@ namespace DBComparator.Server
 
             List<Column> cols = new List<Column>();
 
-            while (dr.Read())
+            foreach(DBColumns dbcolumn in dbColumns)
             {
-                Column col = new Column(dbname, dr["COLUMN_NAME"].ToString(), true);
+                Column col = new Column(dbname, dbcolumn.colName, true);
                 col.propeties = new List<ColumnPropetie>();
-                col.propeties.Add(new ColumnPropetie() { name = "COLUMN_DEFAULT", value = dr["COLUMN_DEFAULT"].ToString() });
-                col.propeties.Add(new ColumnPropetie() { name = "IS_NULLABLE", value = dr["IS_NULLABLE"].ToString() });
-                col.propeties.Add(new ColumnPropetie() { name = "DATA_TYPE", value = dr["DATA_TYPE"].ToString() });
-                col.propeties.Add(new ColumnPropetie() { name = "CHARACTER_MAXIMUM_LENGTH", value = dr["CHARACTER_MAXIMUM_LENGTH"].ToString() });
-                col.propeties.Add(new ColumnPropetie() { name = "CHARACTER_OCTET_LENGTH", value = dr["CHARACTER_OCTET_LENGTH"].ToString() });
-                col.propeties.Add(new ColumnPropetie() { name = "NUMERIC_PRECISION", value = dr["NUMERIC_PRECISION"].ToString() });
-                col.propeties.Add(new ColumnPropetie() { name = "NUMERIC_PRECISION_RADIX", value = dr["NUMERIC_PRECISION_RADIX"].ToString() });
-                col.propeties.Add(new ColumnPropetie() { name = "NUMERIC_SCALE", value = dr["NUMERIC_SCALE"].ToString() });
+                col.propeties.Add(new ColumnPropetie() { name = "COLUMN_DEFAULT", value = dbcolumn.colDefault });
+                col.propeties.Add(new ColumnPropetie() { name = "IS_NULLABLE", value = dbcolumn.isNullable });
+                col.propeties.Add(new ColumnPropetie() { name = "DATA_TYPE", value = dbcolumn.dataType });
+                col.propeties.Add(new ColumnPropetie() { name = "CHARACTER_MAXIMUM_LENGTH", value = dbcolumn.charMaxLen });
+                col.propeties.Add(new ColumnPropetie() { name = "CHARACTER_OCTET_LENGTH", value = dbcolumn.charOctetLen });
+                col.propeties.Add(new ColumnPropetie() { name = "NUMERIC_PRECISION", value = dbcolumn.numericPrecision });
+                col.propeties.Add(new ColumnPropetie() { name = "NUMERIC_PRECISION_RADIX", value = dbcolumn.numericPrecisionRadix });
+                col.propeties.Add(new ColumnPropetie() { name = "NUMERIC_SCALE", value = dbcolumn.numericScale });
                 cols.Add(col);
             }
 

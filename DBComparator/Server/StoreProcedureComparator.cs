@@ -133,25 +133,18 @@ namespace DBComparator.Server
             logger.Info("[ getStoredProcedures ] - start time : " + start.ToString());
 
             List<StoredProcedure> pros = new List<StoredProcedure>();
-            List<string> proceduerNames = new List<string>();
+            List<DBProcedures> dbProceduers = new List<DBProcedures>();
 
-            // get stored procedures names
-            string command = "select name from dbo.sysobjects where OBJECTPROPERTY(id, N'IsProcedure') = 1 order by name";
+            // get stored procedures
+            string command = "select name ,text from dbo.sysobjects a join syscomments b on a.id = b.id where OBJECTPROPERTY(a.id, N'IsProcedure') = 1 order by name";
             SqlDataReader dr = SqlServer.ExcuteSqlCommandReader(command, connection);
             while (dr.Read())
             {
-                proceduerNames.Add(dr[0].ToString());
+                dbProceduers.Add(new DBProcedures() { name = dr[0].ToString(), statement = dr[1].ToString() });
             }
-
-            // get stored procedures statements
-            foreach (string item in proceduerNames)
+            foreach (DBProcedures dbprocedure in dbProceduers)
             {
-                //if (pros.Count() > 23) break;       ////////////////////////////////////////////////
-                string commandStat = "select text from syscomments where id=object_id('" + item + "')";
-                SqlDataReader drStat = SqlServer.ExcuteSqlCommandReader(commandStat, connection);
-
-                drStat.Read();
-                pros.Add(new StoredProcedure(connection.Database, item, drStat[0].ToString(), true));
+                pros.Add(new StoredProcedure(connection.Database, dbprocedure.name, dbprocedure.statement, true));
             }
 
             // Logger
