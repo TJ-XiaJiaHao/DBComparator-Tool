@@ -10,6 +10,8 @@ namespace DBComparator.Server
 {
     public class StoredProcedureComparator
     {
+        private log4net.ILog logger = Log.getLogger(typeof(StoredProcedureComparator));
+
         /// <summary>
         /// Compare the stroed procedures between two databases
         /// </summary>
@@ -18,10 +20,20 @@ namespace DBComparator.Server
         /// <returns></returns>
         public List<StoredProcedureDiff> compareStoredProcedure(SqlConnection conn1, SqlConnection conn2)
         {
+
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ compareStoredProcedure ] - start time : " + start.ToString());
+
             List<StoredProcedure> procedures1 = getStoredProcedures(conn1);
             List<StoredProcedure> procedures2 = getStoredProcedures(conn2);
+            List<StoredProcedureDiff> procedureDiff = getDiffProcedures(procedures1, procedures2);
 
-            return getDiffProcedures(procedures1, procedures2);
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ compareStoredProcedure ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+
+            return procedureDiff;
         }
 
         /// <summary>
@@ -32,6 +44,11 @@ namespace DBComparator.Server
         /// <returns></returns>
         private List<StoredProcedureDiff> getDiffProcedures(List<StoredProcedure> procedures1, List<StoredProcedure> procedures2)
         {
+
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ getDiffProcedures ] - start time : " + start.ToString());
+
             List<StoredProcedureDiff> rtn = new List<StoredProcedureDiff>();
 
             procedures1.Sort((a, b) => a.name.CompareTo(b.name));
@@ -96,6 +113,10 @@ namespace DBComparator.Server
                 pos2++;
             }
 
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ getDiffProcedures ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+
             return rtn;
         }
 
@@ -106,6 +127,11 @@ namespace DBComparator.Server
         /// <returns></returns>
         private List<StoredProcedure> getStoredProcedures(SqlConnection connection)
         {
+
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ getStoredProcedures ] - start time : " + start.ToString());
+
             List<StoredProcedure> pros = new List<StoredProcedure>();
             List<string> proceduerNames = new List<string>();
 
@@ -127,6 +153,10 @@ namespace DBComparator.Server
                 drStat.Read();
                 pros.Add(new StoredProcedure(connection.Database, item, drStat[0].ToString(), true));
             }
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ getStoredProcedures ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
 
             return pros;
         }

@@ -13,6 +13,8 @@ namespace DBComparator.Server
 {
     public class TableComparator
     {
+        private log4net.ILog logger = Log.getLogger(typeof(TableComparator));
+
         /// <summary>
         /// Compare all the table information between two databases
         /// </summary>
@@ -21,6 +23,11 @@ namespace DBComparator.Server
         /// <returns></returns>
         public List<Table> compareTables(SqlConnection conn1, SqlConnection conn2)
         {
+
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ compareTables ] - start time : " + start.ToString());
+
             List<Table> rtnTables = new List<Table>();
 
             // Excute the sql command to get all the table names in a database
@@ -63,6 +70,12 @@ namespace DBComparator.Server
                 table.keys = compareKeys(conn1, conn2, item);
                 if (table.columns.Count() != 0 && table.indexes.Count() != 0 && table.keys.Count() != 0) rtnTables.Add(table);
             }
+
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ compareTables ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+
             return rtnTables;
         }
 
@@ -76,6 +89,11 @@ namespace DBComparator.Server
         /// <returns></returns>
         private List<Indexs> compareIndexs(SqlConnection conn1, SqlConnection conn2, string tableName)
         {
+
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ compareIndexs ] - start time : " + start.ToString());
+
             List<Indexs> rtn = new List<Indexs>();
             Indexs indexs1 = new Indexs(conn1.Database, tableName);
             Indexs indexs2 = new Indexs(conn2.Database, tableName);
@@ -106,6 +124,12 @@ namespace DBComparator.Server
                 rtn.Add(indexs1);
                 rtn.Add(indexs2);
             }
+
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ compareIndexs ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+
             return rtn;
         }
 
@@ -118,6 +142,11 @@ namespace DBComparator.Server
         /// <returns></returns>
         private List<Key> compareKeys(SqlConnection conn1, SqlConnection conn2, string tableName)
         {
+
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ compareKeys ] - start time : " + start.ToString());
+
             List<Key> rtn = new List<Key>();
             Key key1 = new Key(conn1.Database, tableName);
             Key key2 = new Key(conn2.Database, tableName);
@@ -162,6 +191,11 @@ namespace DBComparator.Server
                 rtn.Add(key1);
                 rtn.Add(key2);
             }
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ compareKeys ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+
             return rtn;
         }
 
@@ -174,6 +208,10 @@ namespace DBComparator.Server
         /// <returns></returns>
         private List<ColumnDiff> compareColumns(SqlConnection conn1, SqlConnection conn2, string tableName)
         {
+
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ compareColumns ] - start time : " + start.ToString());
 
             List<ColumnDiff> columns = new List<ColumnDiff>();
 
@@ -205,6 +243,11 @@ namespace DBComparator.Server
                     columns.Add(colDiff);
                 }
             }
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ compareColumns ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+
             return columns;
         }
 
@@ -220,6 +263,11 @@ namespace DBComparator.Server
         /// <returns></returns>
         private List<ColumnDiff> getAndDeleteNoCoexitColumns(List<Column> cols1, List<Column> cols2, string dbname1, string dbname2)
         {
+
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ getAndDeleteNoCoexitColumns ] - start time : " + start.ToString());
+
             List<ColumnDiff> rtn = new List<ColumnDiff>();
             List<Column> toBeDelete1 = new List<Column>();
             List<Column> toBeDelete2 = new List<Column>();
@@ -284,6 +332,11 @@ namespace DBComparator.Server
                 cols2.Remove(item);
                 rtn.Add(colDiff);
             }
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ getAndDeleteNoCoexitColumns ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+
             return rtn;
         }
 
@@ -296,6 +349,11 @@ namespace DBComparator.Server
         /// <returns></returns>
         private List<Column> readColumns(string dbname, SqlDataReader dr)
         {
+
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ readColumns ] - start time : " + start.ToString());
+
             List<Column> cols = new List<Column>();
 
             while (dr.Read())
@@ -313,6 +371,10 @@ namespace DBComparator.Server
                 cols.Add(col);
             }
 
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ readColumns ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
             return cols;
 
         }

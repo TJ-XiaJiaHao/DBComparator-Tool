@@ -9,6 +9,7 @@ namespace DBComparator.Server
 {
     public class SqlServer
     {
+
         /// <summary>
         /// Create a connection to sql server with window identify
         /// </summary>
@@ -17,6 +18,12 @@ namespace DBComparator.Server
         /// <returns></returns>
         public static SqlConnection createConnectionLocal(string server, string database)
         {
+            // Logger
+            log4net.ILog logger = Log.getLogger(typeof(SqlServer));
+            logger.Info("[ createConnectionLocal ] - database : " + server + " , " + database);
+            DateTime start = DateTime.Now;
+            logger.Info("[ createConnectionLocal ] - start time : " + start.ToString());
+
             if (server == "" || database == "") return null;
             SqlConnection conn = new SqlConnection();
             conn.ConnectionString = "server=" + server + ";database=" + database + ";Trusted_Connection=SSPI";
@@ -27,17 +34,26 @@ namespace DBComparator.Server
             catch (Exception e)
             {
                 conn = null;
-                Log.log("databaseLocal connection error - server: " + server + " ; database: " + database);
-
+                logger.Error("[ createConnectionLocal ] - " + e);
             }
             finally
             {
             }
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ createConnectionLocal ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
             return conn;
         }
 
         public static SqlConnection createConnectionRemote(string server, string database, string username, string password)
         {
+            // Logger
+            log4net.ILog logger = Log.getLogger(typeof(SqlServer));
+            logger.Info("[ createConnectionRemote ] - database : " + server + " , " + database + " , " + username + " , " + password);
+            DateTime start = DateTime.Now;
+            logger.Info("[ createConnectionRemote ] - start time : " + start.ToString());
+
             if (server == "" || database == "" || username == "" || password == "") return null;
             SqlConnection conn = new SqlConnection();
             conn.ConnectionString = "server=" + server + ";database=" + database + ";User Id=" + username + ";Password=" + password + ";";
@@ -48,12 +64,15 @@ namespace DBComparator.Server
             catch (Exception e)
             {
                 conn = null;
-                Log.log("databaseRemote connection error - server: " + server + " ; database: " + database + " ; username: " + username + " ; password:" + password);
-
+                logger.Error("[ createConnectionRemote ] - " + e);
             }
             finally
             {
             }
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ createConnectionRemote ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
             return conn;
         }
 
@@ -65,6 +84,12 @@ namespace DBComparator.Server
         /// <returns></returns>
         public static SqlDataReader ExcuteSqlCommandReader(string command, SqlConnection connection)
         {
+            // Logger
+            log4net.ILog logger = Log.getLogger(typeof(SqlServer));
+            //logger.Info("[ ExcuteSqlCommandReader ] - command : " + command);
+            //DateTime start = DateTime.Now;
+            //logger.Info("[ ExcuteSqlCommandReader ] - start time : " + start.ToString());
+
             connection.Close();
             connection.Open();
             SqlCommand cmd = new SqlCommand(command, connection);
@@ -75,8 +100,14 @@ namespace DBComparator.Server
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                rtn = null;
+                logger.Error("[ ExcuteSqlCommandReader ] - " + e);
             }
+
+            // Logger
+            //DateTime end = DateTime.Now;
+            //logger.Info("[ ExcuteSqlCommandReader ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+
             return rtn;
         }
     }

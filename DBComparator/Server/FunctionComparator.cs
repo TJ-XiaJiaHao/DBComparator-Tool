@@ -10,16 +10,31 @@ namespace DBComparator.Server
 {
     public class FunctionComparator
     {
+        private log4net.ILog logger = Log.getLogger(typeof(FunctionComparator));
 
         public List<FunctionDiff> compareFunctions(SqlConnection conn1, SqlConnection conn2)
         {
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ compareFunctions ] - start time : " + start.ToString());
+
             List<Function> functions1 = getFunctions(conn1);
             List<Function> functions2 = getFunctions(conn2);
-            return getDiffFunctions(functions1, functions2, conn1.Database, conn2.Database);
+            List<FunctionDiff> funDiff = getDiffFunctions(functions1, functions2, conn1.Database, conn2.Database);
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ compareFunctions ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+
+            return funDiff;
         }
 
         private List<FunctionDiff> getDiffFunctions(List<Function> functions1, List<Function> functions2,string dbname1,string dbname2)
         {
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ getDiffFunctions ] - start time : " + start.ToString());
+
             List<FunctionDiff> rtn = new List<FunctionDiff>();
 
             functions1.Sort((a, b) => a.name.CompareTo(b.name));
@@ -79,11 +94,20 @@ namespace DBComparator.Server
                 rtn.Add(funDiff);
                 pos2++;
             }
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ getDiffFunctions ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+
             return rtn;
         }
 
         private List<Function> getFunctions(SqlConnection connection)
         {
+            // Logger
+            DateTime start = DateTime.Now;
+            logger.Info("[ getFunctions ] - start time : " + start.ToString());
+
             List<Function> rtn = new List<Function>();
 
             // get function names
@@ -105,6 +129,11 @@ namespace DBComparator.Server
                 Function fun = new Function(connection.Database, item, drStat[0].ToString(), true);
                 rtn.Add(fun);
             }
+
+            // Logger
+            DateTime end = DateTime.Now;
+            logger.Info("[ getFunctions ] - end time : " + end.ToString() + " ; spend time : " + (end - start).ToString() + "\n");
+
             return rtn;
         }
     }

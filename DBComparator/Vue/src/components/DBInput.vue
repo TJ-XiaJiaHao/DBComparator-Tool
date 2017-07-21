@@ -56,7 +56,7 @@
                    data-container="body" data-toggle="popover" data-placement="left" v-model="username2"/>
           </div>
           <div class="col-sm-6">
-            <input type="text" class="form-control input-lg db-input-text" id="db-password-two" placeholder="password"
+            <input type="password" class="form-control input-lg db-input-text" id="db-password-two" placeholder="password"
                    title="don't need if you connect to the local sql server with windows authentication"
                    data-container="body" data-toggle="popover" data-placement="right" v-model="password2"/>
           </div>

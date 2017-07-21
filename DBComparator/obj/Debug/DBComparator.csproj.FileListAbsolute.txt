@@ -71,3 +71,5 @@ C:\project\DBComparator\DBComparator\obj\Debug\DBComparator.pdb
 C:\project\DBComparator\DBComparator\bin\System.Web.Cors.dll
 C:\project\DBComparator\DBComparator\bin\System.Web.Http.Cors.dll
 C:\project\DBComparator\DBComparator\bin\System.Web.Http.Cors.xml
+C:\project\DBComparator\DBComparator\bin\log4net.dll
+C:\project\DBComparator\DBComparator\bin\log4net.xml
