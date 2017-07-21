@@ -144,6 +144,10 @@ namespace DBComparator.Server
             }
             foreach (DBProcedures dbprocedure in dbProceduers)
             {
+                if (dbprocedure.name == "SP_COPY_EQUIPMENT_DATA_FROM_ONESOURCE_TO_EAM")
+                {
+                    string statement = dbprocedure.statement;
+                }
                 pros.Add(new StoredProcedure(connection.Database, dbprocedure.name, dbprocedure.statement, true));
             }
 

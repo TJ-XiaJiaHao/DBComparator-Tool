@@ -16,7 +16,7 @@
       <tr v-bind:class="{'tb-row':(current.type == 'PROCEDURES' || current.type == 'FUNCTIONS')}"
           v-for="(row,rowIndex) in current.body"
           @click="itemClick(rowIndex)">
-        <td v-bind:class="{'red':(typeof col == 'boolean' && col == 0) || (typeof col != 'boolean' && col > 0),'pointer':current.type == 'TABLES' && colIndex > 2}" v-for="(col,colIndex) in row" v-bind:title="current.tooltip" @click="colClick(rowIndex,colIndex)">{{ col
+        <td v-bind:class="{'left':colIndex == 0,'red':(typeof col == 'boolean' && col == 0) || (typeof col != 'boolean' && col > 0),'pointer':current.type == 'TABLES' && colIndex > 2}" v-for="(col,colIndex) in row" v-bind:title="current.tooltip" @click="colClick(rowIndex,colIndex)">{{ col
           }}
         </td>
       </tr>
@@ -56,10 +56,10 @@
     methods: {
       /* Table IN and OUT animation */
       showTable: function () {
-        $("#main").animate({paddingLeft: '50px', opacity: '1'}, 500);
+        $("#main").css("display","block").animate({paddingLeft: '50px', opacity: '1'}, 500);
       },
       hideTable: function () {
-        $("#main").animate({paddingLeft: '100px', opacity: '0'}, 0);
+        $("#main").animate({paddingLeft: '100px', opacity: '0'}, 0).css("display","none");
         bus.$emit("hideIK","");
       },
 
@@ -122,8 +122,11 @@
       sort: function (index) {
         var self = this;
         self.current.sortDir *= -1;
+
         this.current.body.sort(function (a, b) {
-          return self.current.sortDir == 1 ? a[index] > b[index] : a[index] < b[index]
+          if(a[index] < b[index])return -1 * self.current.sortDir;
+          else if(a[index] > b[index])return self.current.sortDir;
+          else return 0;
         })
       }
       ,
@@ -302,6 +305,21 @@
         self.showTable();
         self.showFunctionDiff();
       });
+
+
+      /* Change the scroll style */
+      $(document).ready(function () {
+        $("#main").niceScroll({
+          styler: "fb",
+          cursorcolor: "rgb(201,201,201)",
+          cursorwidth: '8',
+          cursorborderradius: '0',
+          autohidemode: 'true',
+          background: 'rgba(0,0,0,0.1)',
+          spacebarenabled: false,
+          cursorborder: '0'
+        });
+      });
     }
   }
 </script>
@@ -313,6 +331,8 @@
     padding: 20px 50px 10px 100px;
     opacity: 0;
     text-align: center;
+    overflow: scroll;
+    display:none;
   }
 
   .tb-head {
@@ -333,5 +353,9 @@
   }
   .pointer:hover{
     border:1px solid black;
+  }
+  .left{
+    text-align:left;
+    padding-left:30px;
   }
 </style>

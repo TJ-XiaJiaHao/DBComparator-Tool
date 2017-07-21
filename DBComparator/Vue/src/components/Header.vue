@@ -1,7 +1,7 @@
 <template>
   <div id="header">
     <dbinput></dbinput>
-    <div class="col-sm-4"><label class="header-label header-db">{{ server1 }}  {{ dbname1 }} | {{ server2 }}  {{ dbname2
+    <div class="col-sm-4"><label class="header-label header-db">{{ server1 }}  {{ dbname1 }} <br/> {{ server2 }}  {{ dbname2
       }}</label></div>
     <div class="col-sm-4 compare-title"><label class="compare-title-text">{{ status }}</label></div>
     <div class="col-sm-4">
@@ -101,7 +101,7 @@
         var self = this;
         $("#header").animate({width: '100%'}, 500, function () {
           $(".header-db").animate({opacity: '1', paddingTop: '0'}, 1000);
-          $(".header-btns").animate({opacity: '1', marginTop: '7px'}, 1000);
+          $(".header-btns").animate({opacity: '1', margin: '7px 10px 0'}, 1000);
           $(".compare-title-text").animate({opacity: '1', marginTop: '0px'}, 1000);
           console.log("[ EVENT ] - showTable", self.data);
           bus.$emit("showTable", self.data);
@@ -187,10 +187,13 @@
     overflow: visible;
   }
 
+  label{
+    margin:0;
+  }
   /* 左边的文字　*/
   .header-label {
     height: 50px;
-    line-height: 50px;
+    line-height: 25px;
     opacity: 0;
     padding-top: 10px;
     text-align: left;
@@ -199,7 +202,7 @@
   /*　右边的按钮　*/
   .btn-reinput, .btn-recompare, #selector {
     float: right;
-    margin: 17px 10px;
+    margin: 17px 10px 0;
     opacity: 0;
   }
 

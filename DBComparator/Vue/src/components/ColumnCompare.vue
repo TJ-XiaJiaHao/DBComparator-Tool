@@ -144,7 +144,7 @@
 
   /* body */
   #column-compare {
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 0;
     top: 0;

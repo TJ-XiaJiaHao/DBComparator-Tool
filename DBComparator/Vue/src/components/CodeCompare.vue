@@ -2,12 +2,12 @@
   <div id="code-compare">
     <button type="button" class="btn btn-default btn-close" @click="close"> &times;</button>
     <div class="half left">
-      <h2 class="title">{{ dbname1 }} - {{ childname1 }}</h2>
+      <h2 class="title" v-bind:title="dbname1 + ' - ' + childname1">{{ dbname1 }} - {{ childname1 }}</h2>
       <div class="code-block code1">
       </div>
     </div>
     <div class="half right">
-      <h2 class="title">{{ dbname2 }} - {{ childname2 }}</h2>
+      <h2 class="title" v-bind:title="dbname2 + ' - ' + childname2">{{ dbname2 }} - {{ childname2 }}</h2>
       <div class="code-block code2">
       </div>
     </div>
@@ -156,6 +156,10 @@
     margin: 20px 0 10px;
     color: #5BA1CF;
     opacity:0;
+    font-size:28px;
+    line-height: 30px;
+    overflow: hidden;
+    white-space:nowrap;
   }
   .left .title{
     margin-left:-30px;

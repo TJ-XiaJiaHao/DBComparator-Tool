@@ -10,14 +10,18 @@
     <div class="main">
       <div class="half left">
         <div v-for="(item, index) in data1">
-          <label>{{ item.key }} :</label>
-          <span>{{ item.value }}</span>
+          <div><label>{{ item.key }} :</label></div>
+          <div>
+            <div v-for="(val,index) in item.value">[ {{ val }} ] </div>
+          </div>
         </div>
       </div>
       <div class="half right">
         <div v-for="(item, index) in data2">
-          <label>{{ item.key }} :</label>
-          <span>{{ item.value }}</span>
+          <div><label>{{ item.key }} :</label></div>
+          <div>
+            <div v-for="(val,index) in item.value">[ {{ val }} ] </div>
+          </div>
         </div>
       </div>
     </div>
@@ -87,6 +91,21 @@
       bus.$on("hideIK", function (data) {
         self.close();
       })
+
+
+      /* Change the scroll style */
+      $(document).ready(function () {
+        $(".half").niceScroll({
+          styler: "fb",
+          cursorcolor: "rgb(201,201,201)",
+          cursorwidth: '0',
+          cursorborderradius: '0',
+          autohidemode: 'true',
+          background: '#1B2426',
+          spacebarenabled: false,
+          cursorborder: '0'
+        });
+      });
     }
   }
 </script>
@@ -98,7 +117,7 @@
   }
 
   #ik-compare {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
@@ -135,6 +154,7 @@
     float: left;
     padding: 10px;
     text-align: left;
+    overflow-y: scroll;
   }
 
   .left {
