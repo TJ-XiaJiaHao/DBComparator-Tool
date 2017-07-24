@@ -1,35 +1,29 @@
 <template>
   <div id="db-input">
     <div class="col-md-3 col-sm-2"></div>
-
     <div class="col-md-6 col-sm-8 db-input-div">
       <h1 class="db-input-title">DATABASE ONE</h1>
       <form class="form-horizontal db-input-form" role="form">
         <div class="form-group">
           <div class="col-sm-12">
             <input type="text" class="form-control input-lg db-input-text" id="servername-one" placeholder="server name"
-                   title="you can get the server name in the sql server management tool!"
-                   data-container="body" data-toggle="popover" data-placement="right" v-model="server1">
+                   :title="tooltipmsg.servername" data-container="body" data-placement="right" v-model="server1">
           </div>
         </div>
         <div class="form-group">
           <div class="col-sm-12">
             <input type="text" class="form-control input-lg db-input-text" id="db-name-one" placeholder="database name"
-                   title="please input the database name you want to compare"
-                   data-container="body" data-toggle="popover" data-placement="right" v-model="dbname1">
+                   :title="tooltipmsg.dbname" data-container="body" data-placement="right" v-model="dbname1">
           </div>
         </div>
         <div class="form-group">
           <div class="col-sm-6">
             <input type="text" class="form-control input-lg db-input-text" id="db-username-one" placeholder="username"
-                   title="don't need if you connect to the local sql server with windows authentication"
-                   data-container="body" data-toggle="popover" data-placement="left" v-model="username1"/>
+                   :title="tooltipmsg.remote" data-container="body" data-placement="left" v-model="username1"/>
           </div>
           <div class="col-sm-6">
-            <input type="password" class="form-control input-lg db-input-text" id="db-password-one"
-                   placeholder="password"
-                   title="don't need if you connect to the local sql server with windows authentication"
-                   data-container="body" data-toggle="popover" data-placement="right" v-model="password1"/>
+            <input type="password" class="form-control input-lg db-input-text" id="db-password-one" v-model="password1"
+                   placeholder="password" :title="tooltipmsg.remote" data-container="body" data-placement="right"/>
           </div>
         </div>
       </form>
@@ -38,27 +32,23 @@
         <div class="form-group">
           <div class="col-sm-12">
             <input type="text" class="form-control input-lg db-input-text" id="servername-two" placeholder="server name"
-                   title="you can get the server name in the sql server management tool!"
-                   data-container="body" data-toggle="popover" data-placement="right" v-model="server2">
+                   :title="tooltipmsg.servername" data-container="body" data-placement="right" v-model="server2">
           </div>
         </div>
         <div class="form-group">
           <div class="col-sm-12">
             <input type="text" class="form-control input-lg db-input-text" id="db-name-two" placeholder="database name"
-                   title="please input the database name you want to compare"
-                   data-container="body" data-toggle="popover" data-placement="right" v-model="dbname2">
+                   :title="tooltipmsg.dbname" data-container="body" data-placement="right" v-model="dbname2">
           </div>
         </div>
         <div class="form-group">
           <div class="col-sm-6">
             <input type="text" class="form-control input-lg db-input-text" id="db-username-two" placeholder="username"
-                   title="don't need if you connect to the local sql server with windows authentication"
-                   data-container="body" data-toggle="popover" data-placement="left" v-model="username2"/>
+                   :title="tooltipmsg.remote" data-container="body" data-placement="left" v-model="username2"/>
           </div>
           <div class="col-sm-6">
-            <input type="password" class="form-control input-lg db-input-text" id="db-password-two" placeholder="password"
-                   title="don't need if you connect to the local sql server with windows authentication"
-                   data-container="body" data-toggle="popover" data-placement="right" v-model="password2"/>
+            <input type="password" class="form-control input-lg db-input-text" id="db-password-two" v-model="password2"
+                   placeholder="password" :title="tooltipmsg.remote" data-container="body" data-placement="right"/>
           </div>
         </div>
       </form>
@@ -75,6 +65,11 @@
     name: 'DBInput',
     data () {
       return {
+        tooltipmsg: {
+          servername: "please input the server name you used in the sql server management tool !",
+          dbname: "please input the database name you want to compare !",
+          remote: "don't need if you connect to the local sql server with windows authentication !"
+        },
         server1: "",
         dbname1: "",
         username1: "",
@@ -106,7 +101,7 @@
 
       /* Submit the databases information to header component */
       submit: function () {
-        console.log("[ SUBMIT ] - db1: " + this.server1 + " " + this.dbname1 + " ; db2: " + this.server2 + " " + this.dbname2);
+        // console.log("[ SUBMIT ] - db1: " + this.server1 + " " + this.dbname1 + " ; db2: " + this.server2 + " " + this.dbname2);
         if (!this.check()) return;
         bus.$emit("compareDB", {
           server1: this.server1,
@@ -133,7 +128,7 @@
         var dbInput = $("#db-input");
         dbInput.css("display", "block");
         dbInput.animate({paddingTop: '0px', opacity: 1}, 1000, function () {
-          console.log(callback);
+          //console.log(callback);
           if (callback != null) callback();
         });
       }
@@ -143,12 +138,16 @@
       self.showDBInput(function () {
         toastr.success("Welcome to DBComparator!");
       });
+
+      /* Listen for events */
       bus.$on("showDBInput", function (data) {
-        console.log("[ EVENT ] - showDBInput");
+        //console.log("[ EVENT ] - showDBInput");
         self.showDBInput();
       })
 
       window.onload = function () {
+
+        /* Init the tooltip  */
         $("#db-name-one").tooltip();
         $("#db-name-two").tooltip();
         $("#servername-one").tooltip();
@@ -158,6 +157,7 @@
         $("#db-password-one").tooltip();
         $("#db-password-two").tooltip();
 
+        /* Init the toastr */
         toastr.options = {
           closeButton: true,
           progressBar: true,

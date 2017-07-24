@@ -24,6 +24,8 @@ namespace DBComparator.Models
 
         public bool compare(Function function)
         {
+            this.regex = RemoveSqlComment(this.statements).Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
+            function.regex = RemoveSqlComment(function.statements).Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
             if (this.name != function.name || this.regex != function.regex) return false;
             return true;
         }

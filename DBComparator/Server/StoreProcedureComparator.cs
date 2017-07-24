@@ -127,6 +127,14 @@ namespace DBComparator.Server
         /// <returns></returns>
         private List<StoredProcedure> getStoredProcedures(SqlConnection connection)
         {
+            // TEST
+            //string commandTest = "select text from syscomments where id=object_id('SP_COPY_EQUIPMENT_DATA_FROM_ONESOURCE_TO_EAM')";
+            //SqlDataReader drTest = SqlServer.ExcuteSqlCommandReader(commandTest, connection);
+            //while(drTest.Read()){
+            //    string statement = drTest[0].ToString();
+            //}
+
+
 
             // Logger
             DateTime start = DateTime.Now;
@@ -140,14 +148,16 @@ namespace DBComparator.Server
             SqlDataReader dr = SqlServer.ExcuteSqlCommandReader(command, connection);
             while (dr.Read())
             {
-                dbProceduers.Add(new DBProcedures() { name = dr[0].ToString(), statement = dr[1].ToString() });
+                // A large function will send by several times
+                List<DBProcedures>  beforeProducers = dbProceduers.Where(a => a.name == dr[0].ToString()).ToList();
+                if (beforeProducers.Count() > 0)
+                {
+                    beforeProducers[0].statement += dr[1].ToString();
+                }
+                else dbProceduers.Add(new DBProcedures() { name = dr[0].ToString(), statement = dr[1].ToString() });
             }
             foreach (DBProcedures dbprocedure in dbProceduers)
             {
-                if (dbprocedure.name == "SP_COPY_EQUIPMENT_DATA_FROM_ONESOURCE_TO_EAM")
-                {
-                    string statement = dbprocedure.statement;
-                }
                 pros.Add(new StoredProcedure(connection.Database, dbprocedure.name, dbprocedure.statement, true));
             }
 

@@ -78,7 +78,7 @@
         this.current.body = body;
         this.current.tooltip = tooltip;
         this.current.type = type;
-        if (this.current.body.lenght == 0) {
+        if (this.current.body.length == 0) {
           this.isNoItems = true;
           this.current.header = [];
         }
@@ -128,9 +128,9 @@
           else if(a[index] > b[index])return self.current.sortDir;
           else return 0;
         })
-      }
-      ,
-      /* Count the different objects */
+      },
+
+      /* Count the different objects in two lists*/
       countDiff: function (list1, list2) {
         if (list1 == null && list2 == null)return 0;
         if (list1 == null)return list2.length;

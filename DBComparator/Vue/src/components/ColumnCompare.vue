@@ -10,7 +10,6 @@
       </div>
     </div>
     <div class="column-diff" v-for="(tb,tbIndex) in columns">
-      <h3 class="column-name">{{ names[tbIndex] }}</h3>
       <table class="table table-bordered">
         <thead>
         <tr>
@@ -21,13 +20,14 @@
         </thead>
         <tbody>
         <tr v-for="(row,rowIndex) in tb">
+          <td v-if="rowIndex == 0" rowspan="2" class="column-name">{{ names[tbIndex] }}</td>
           <td v-for="(col,colIndex) in row"
               v-bind:class="{difference:tb[0][colIndex] != tb[1][colIndex] && colIndex > 0}">
             {{ col }}
           </td>
         </tr>
         </tbody>
-      </table>
+      </table class="table table-bordered">
     </div>
   </div>
 </template>
@@ -39,6 +39,7 @@
     data () {
       return {
         header: [                               // Table Headers
+          "COLNAME",
           "DBNAME",
           "EXIST",
           "CHARACTER MAXIMUM LENGTH",
@@ -86,6 +87,7 @@
         $("#column-compare").css("display", "block").animate({height: '100%'}, 500);
       },
 
+
       /* Close the page, actually just set the page display to none*/
       close: function () {
         $("#column-compare").animate({height: '0'}, 500, function () {
@@ -98,7 +100,7 @@
 
       /* Listen for events */
       bus.$on("showColumn", function (data) {
-        console.log("[ EVENT ] - showColumn", data)
+        // console.log("[ EVENT ] - showColumn", data)
         self.showColumn(data);
       })
 
@@ -106,10 +108,10 @@
       $("#column-compare").ready(function () {
         $("#column-compare").niceScroll({
           styler: "fb",
-          cursorcolor: "rgb(16, 167, 175)",
-          cursorwidth: '6',
+          cursorcolor: "rgb(201,201,201)",
+          cursorwidth: '8',
           cursorborderradius: '10px',
-          background: 'rgb(230,230,230)',
+          background: 'rgba(0,0,0,0.1)',
           spacebarenabled: false,
           cursorborder: '0',
           zindex: '1000'
@@ -138,7 +140,7 @@
   }
 
   .title {
-    text-align: center;
+    text-align: left;
     line-height: 50px;
   }
 
@@ -170,8 +172,12 @@
 
   .column-name {
     text-align: center;
+    line-height: 20px;
+    padding-top:30px;
     color: deepskyblue;
-    margin: 0 0 20px 0;
+    width:200px;
+    max-width:200px;
+    word-wrap:break-word;
   }
 
   .difference {

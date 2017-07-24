@@ -81,11 +81,11 @@
     mounted() {
       var self = this;
       bus.$on("showIndexes", function (data) {
-        console.log("[ EVENT ] - showIndexes", data);
+        // console.log("[ EVENT ] - showIndexes", data);
         self.showIndexes(data);
       });
       bus.$on("showKeys", function (data) {
-        console.log("[ EVENT ] - showKeys", data);
+        // console.log("[ EVENT ] - showKeys", data);
         self.showKeys(data);
       });
       bus.$on("hideIK", function (data) {

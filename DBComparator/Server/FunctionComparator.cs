@@ -116,7 +116,12 @@ namespace DBComparator.Server
             SqlDataReader dr = SqlServer.ExcuteSqlCommandReader(command, connection);
             while (dr.Read())
             {
-                dbfunctions.Add(new DBFunctions() { name = dr[0].ToString(), statement = dr[1].ToString() });
+                List<DBFunctions> befireFunction = dbfunctions.Where(a => a.name == dr[0].ToString()).ToList();
+                if (befireFunction.Count() > 0)
+                {
+                    befireFunction[0].statement += dr[1].ToString();
+                }
+                else dbfunctions.Add(new DBFunctions() { name = dr[0].ToString(), statement = dr[1].ToString() });
             }
             foreach (DBFunctions dbfunction in dbfunctions)
             {

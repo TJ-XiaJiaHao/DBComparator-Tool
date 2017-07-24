@@ -1,8 +1,9 @@
 <template>
   <div id="header">
     <dbinput></dbinput>
-    <div class="col-sm-4"><label class="header-label header-db">{{ server1 }}  {{ dbname1 }} <br/> {{ server2 }}  {{ dbname2
-      }}</label></div>
+    <div class="col-sm-4">
+      <label class="header-label header-db">{{ server1 }}  {{ dbname1 }} <br/> {{ server2 }}  {{ dbname2 }}</label>
+    </div>
     <div class="col-sm-4 compare-title"><label class="compare-title-text">{{ status }}</label></div>
     <div class="col-sm-4">
       <div id="selector" class="header-btns">
@@ -20,7 +21,7 @@
   import DBInput from '@/components/DBInput'
   import bus from "../assets/eventBus"
   export default {
-    name: 'DBInput',
+    name: 'Header',
     components: {
       dbinput: DBInput
     },
@@ -35,7 +36,7 @@
         dbname1: "",
         dbname2: "",
         status: 'COMPARING...',
-        data: {},
+        data: {},                                             // response data
         options: ["TABLES", "PROCEDURES", "FUNCTIONS"],
         selected: "0"
       }
@@ -47,33 +48,40 @@
         this.status = "COMPARING...";
         this.data = {};
         $(".compare-title-text").css("color", "black");
-        console.log("[ EVENT ] - Header Clear");
+        // console.log("[ EVENT ] - Header Clear");
       },
 
       /* Access the back-end to get the differences between two databases */
       getURL: function () {
         var url = global.host + "/api/DBComparator?";
+
+        /* Connect to the local database */
         if (this.username1 == "" && this.password1 == "" && this.username2 == "" && this.password2 == "") {
           url += "server1=" + this.server1 + "&dbname1=" + this.dbname1 + "&server2=" + this.server2 + "&dbname2=" + this.dbname2;
         }
+
+        /* Connect to remote database */
         else if (this.username1 != "" && this.password1 != "" && this.username2 != "" && this.password2 != "") {
           url += "server1=" + this.server1 + "&dbname1=" + this.dbname1 + "&username1=" + this.username1 + "&password1=" + this.password1 +
             "&server2=" + this.server2 + "&dbname2=" + this.dbname2 + "&username2=" + this.username2 + "&password2=" + this.password2;
         }
-        else if(this.username1 =="" && this.password1 == "" && this.username2 != "" && this.password2 != ""){
-            url += "server1=" + this.server2 + "&dbname1=" + this.dbname2 + "&username1=" + this.username2 + "&password1=" + this.password2 +
-              "&server2=" + this.server1 + "&dbname2=" + this.dbname1;
+
+        /* Connect to remote and local databases */
+        else if (this.username1 == "" && this.password1 == "" && this.username2 != "" && this.password2 != "") {
+          url += "server1=" + this.server2 + "&dbname1=" + this.dbname2 + "&username1=" + this.username2 + "&password1=" + this.password2 +
+            "&server2=" + this.server1 + "&dbname2=" + this.dbname1;
         }
-        else if(this.username1 !="" && this.password1 != "" && this.username2 == "" && this.password2 == ""){
+        else if (this.username1 != "" && this.password1 != "" && this.username2 == "" && this.password2 == "") {
           url += "server1=" + this.server1 + "&dbname1=" + this.dbname1 + "&username1=" + this.username1 + "&password1=" + this.password1 +
             "&server2=" + this.server2 + "&dbname2=" + this.dbname2;
         }
         return url;
       },
       compareDatabases: function (callback) {
-        var url = this.getURL();
-        console.log("[ GET ] - " + url);
+        // console.log("[ GET ] - " + url);
         this.clear();
+        this.disableAll();
+        var url = this.getURL();
         var self = this;
         this.$http.get(url).then(function (response) {
             if (response.status == 200) {
@@ -84,14 +92,19 @@
               else if (response.body.code == 1000) {
                 self.status = "TABLES";
                 self.data = response.body;
-                console.log("[ RESPONSE ] - ", this.data);
+                 console.log("[ RESPONSE ] - ", this.data);
                 bus.$emit("changeData", this.data);
                 self.selectedChange();
+                self.enableAll();
                 if (callback != null) callback();
               }
             }
+            else {
+                toastr.error("Server error");
+            }
           }, function (error) {
-            console.log("[ ERROR ] - ", error);
+            toastr.error("Network error!");
+            // console.log("[ ERROR ] - ", error);
           }
         );
       },
@@ -103,11 +116,11 @@
           $(".header-db").animate({opacity: '1', paddingTop: '0'}, 1000);
           $(".header-btns").animate({opacity: '1', margin: '7px 10px 0'}, 1000);
           $(".compare-title-text").animate({opacity: '1', marginTop: '0px'}, 1000);
-          console.log("[ EVENT ] - showTable", self.data);
           bus.$emit("showTable", self.data);
         });
       },
       hideHeader: function () {
+        bus.$emit("hideTable","");
         $(".header-db").css("opacity", "0").css("paddingTop", "10px");
         $(".header-btns").css("opacity", "0").css("marginTop", "17px");
         $(".compare-title-text").css("opacity", "0").css("marginTop", "10px");
@@ -118,7 +131,6 @@
       /* Button events */
       reinput: function () {
         this.hideHeader();
-        bus.$emit("hideTable", "");
       },
       recompare: function () {
         var self = this;
@@ -142,6 +154,12 @@
             bus.$emit("showFunctionDiff");
             break;
         }
+      },
+      disableAll:function(){
+          $(".btn").attr("disabled",true);
+      },
+      enableAll:function(){
+        $(".btn").attr("disabled",false);
       }
     },
     watch: {
@@ -169,6 +187,7 @@
         self.showHeader();
       });
 
+      /* Init the selector */
       $(document).ready(function () {
         $('#option-selector').selectpicker({
           'selectedText': 'TABLES'
@@ -187,9 +206,10 @@
     overflow: visible;
   }
 
-  label{
-    margin:0;
+  label {
+    margin: 0;
   }
+
   /* 左边的文字　*/
   .header-label {
     height: 50px;
