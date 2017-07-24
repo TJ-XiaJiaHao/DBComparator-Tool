@@ -19,13 +19,13 @@ namespace DBComparator.Models
             this.name = name;
             this.statements = statements;
             this.exist = exist;
-            this.regex = RemoveSqlComment(this.statements).Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
+            this.regex = RemoveSqlComment(this.statements);
         }
 
         public bool compare(Function function)
         {
-            this.regex = RemoveSqlComment(this.statements).Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
-            function.regex = RemoveSqlComment(function.statements).Replace("\r\n", "").Replace("\n", "").Replace(" ", "");
+            this.regex = RemoveSqlComment(this.statements);
+            function.regex = RemoveSqlComment(function.statements);
             if (this.name != function.name || this.regex != function.regex) return false;
             return true;
         }
@@ -45,7 +45,7 @@ namespace DBComparator.Models
                       default: return m.Value;
                   }
               }
-            );
+            ).Replace("\r\n", "").Replace("\n", "").Replace("\r", "").Replace(" ", "").Replace("\t", "").ToUpper();
         }
 
         public string dbname { get; set; }

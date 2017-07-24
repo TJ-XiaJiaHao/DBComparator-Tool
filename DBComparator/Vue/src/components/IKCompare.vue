@@ -5,7 +5,13 @@
       <div class="col-sm-2 dbname"><label>{{ dbname1 }}</label></div>
       <div class="col-sm-4"><label>{{ title }}</label></div>
       <div class="col-sm-2 dbname"><label>{{ dbname2 }}</label></div>
-      <div class="col-sm-2"><img class="btn-close" src="../assets/icon/down.png" @click="close"/></div>
+      <div class="col-sm-1">
+        <input id="checkbox-all" type="checkbox" v-model="isAll">
+        <label id="label-all" for="checkbox-all">ALL</label>
+      </div>
+      <div class="col-sm-1">
+        <img class="btn-close" src="../assets/icon/down.png" @click="close"/>
+      </div>
     </div>
     <div class="main">
       <div class="half left">
@@ -34,16 +40,28 @@
     name: 'DBInput',
     data () {
       return {
+        isAll: false,
         dbname1: "dbname1",
         dbname2: "dbname2",
         title: "INDEXES",
         data1: [],
         data2: [],
+        original: {
+          type: "",
+          data1: [],
+          data2: []
+        }
       }
     },
     methods: {
+      showIK: function () {
+        var height = $("#ik-compare").css("height");
+        if (height == "0px") {
+          $("#ik-compare").css("display", "block").animate({height: "50%"}, 500);
+        }
+      },
       showIndexes: function (indexes) {
-        $("#ik-compare").css("display", "block").animate({height: "50%"}, 500);
+        this.showIK();
         this.title = indexes[0].tbname;
         this.dbname1 = indexes[0].dbname;
         this.dbname2 = indexes[1].dbname;
@@ -52,12 +70,16 @@
 
         /* Initialize the data1 */
         this.data1.push({key: "indexes", value: indexes[0].indexes});
+        this.original.data1 = this.data1;
 
         /* Initialize the data2 */
         this.data2.push({key: "indexes", value: indexes[1].indexes});
+        this.original.data2 = this.data2;
+
+        this.original.type = "INDEXES";
       },
       showKeys: function (keys) {
-        $("#ik-compare").css("display", "block").animate({height: "50%"}, 500);
+        this.showIK();
         this.title = keys[0].tbname;
         this.dbname1 = keys[0].dbname;
         this.dbname2 = keys[1].dbname;
@@ -67,10 +89,48 @@
         /* Initialize the data1 */
         this.data1.push({key: "primaryKeys", value: keys[0].primaryKeys});
         this.data1.push({key: "foreignKeys", value: keys[0].foreignKeys});
+        this.original.data1 = this.data1;
 
         /* Initialize the data2 */
         this.data2.push({key: "primaryKeys", value: keys[1].primaryKeys});
         this.data2.push({key: "foreignKeys", value: keys[1].foreignKeys});
+        this.original.data2 = this.data2;
+
+        this.original.type = "KEYS";
+      },
+      toggleAll: function (flag) {
+        if (flag) {
+          this.data1 = this.original.data1;
+          this.data2 = this.original.data2;
+        }
+        else {
+          var self = this;
+          var newData1 = [];
+          var newData2 = [];
+
+          /* Remove the coexist values from data1 */
+          for (var i = 0; i < this.data1.length; i++) {
+            newData1.push({key: this.data1[i].key, value: []});
+            for (var j = 0; j < this.data1[i].value.length; j++) {
+              if (this.data2[i].value.indexOf(this.data1[i].value[j]) < 0) {
+                newData1[i].value.push(this.data1[i].value[j]);
+              }
+            }
+          }
+
+          /* Remove the coexist values from data2*/
+          for (var i = 0; i < this.data2.length; i++) {
+            newData2.push({key: this.data2[i].key, value: []});
+            for (var j = 0; j < this.data2[i].value.length; j++) {
+              if (this.data1[i].value.indexOf(this.data2[i].value[j]) < 0) {
+                newData2[i].value.push(this.data2[i].value[j]);
+              }
+            }
+          }
+
+          this.data1 = newData1;
+          this.data2 = newData2;
+        }
       },
       close: function () {
         $("#ik-compare").animate({height: "0"}, 500, function () {
@@ -78,15 +138,22 @@
         });
       }
     },
+    watch: {
+      isAll: function (newAll) {
+        this.toggleAll(newAll);
+      }
+    },
     mounted() {
       var self = this;
       bus.$on("showIndexes", function (data) {
         // console.log("[ EVENT ] - showIndexes", data);
         self.showIndexes(data);
+        self.toggleAll(self.isAll);
       });
       bus.$on("showKeys", function (data) {
         // console.log("[ EVENT ] - showKeys", data);
         self.showKeys(data);
+        self.toggleAll(self.isAll);
       });
       bus.$on("hideIK", function (data) {
         self.close();
@@ -141,6 +208,16 @@
     float: right;
     margin-top: 12px;
     cursor: pointer;
+  }
+
+  #checkbox-all {
+    margin-top: 13px;
+    float: right;
+  }
+
+  #label-all {
+    float: right;
+    margin-right: 5px;
   }
 
   .main {

@@ -32,16 +32,16 @@
       showCode: function () {
         $("#code-compare").css("display", "block").animate({height: '100%'}, 500, function () {
           $(".code-block").animate({marginTop: '0', opacity: '1'}, 1000);
-          $(".left .title").animate({marginLeft: '0', opacity: '1'}, 1000);
-          $(".right .title").animate({marginLeft: '0', opacity: '1'}, 1000);
+          $(".left .title").animate({marginLeft: '5%', opacity: '1'}, 1000);
+          $(".right .title").animate({marginLeft: '5%', opacity: '1'}, 1000);
         });
         SyntaxHighlighter.highlight();
       },
 
       /* Close the page, set the display to none */
       close: function () {
-        $(".left .title").animate({marginLeft: '-30px', opacity: '0'}, 500);
-        $(".right .title").animate({marginLeft: '30px', opacity: '0'}, 500);
+        $(".left .title").animate({marginLeft: '0px', opacity: '0'}, 500);
+        $(".right .title").animate({marginLeft: '0px', opacity: '0'}, 500);
         $(".code-block").animate({marginTop: '30px', opacity: '0'}, 500);
         $("#code-compare").animate({height: '0'}, 500, function () {
           $(this).css("display", "none");
@@ -153,12 +153,13 @@
   .title {
     text-align: center;
     height: 30px;
-    margin: 20px 0 10px;
+    margin: 20px 0 10px 5%;
     color: #5BA1CF;
     opacity:0;
     font-size:28px;
     line-height: 30px;
     overflow: hidden;
+    max-width:90%;
     white-space:nowrap;
   }
   .left .title{

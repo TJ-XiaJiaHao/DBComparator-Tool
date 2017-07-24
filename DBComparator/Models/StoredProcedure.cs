@@ -19,17 +19,13 @@ namespace DBComparator.Models
             this.name = name;
             this.statements = statements;
             this.exist = exist;
-            this.regex = RemoveSqlComment(this.statements).Replace("\r\n", "").Replace("\n", "").Replace("\r","").Replace(" ", "").Replace("\t","");
+            this.regex = RemoveSqlComment(this.statements);
         }
 
         public bool compare(StoredProcedure storedProducer)
         {
-            this.regex = RemoveSqlComment(this.statements).Replace("\r\n", "").Replace("\n", "").Replace("\r", "").Replace(" ", "").Replace("\t", "");
-            storedProducer.regex = RemoveSqlComment(storedProducer.statements).Replace("\r\n", "").Replace("\n", "").Replace("\r", "").Replace(" ", "").Replace("\t", "");
-            if (this.name == "SP_COPY_EQUIPMENT_DATA_FROM_ONESOURCE_TO_EAM")
-            {
-                bool flag = this.regex == storedProducer.regex;
-            }
+            this.regex = RemoveSqlComment(this.statements);
+            storedProducer.regex = RemoveSqlComment(storedProducer.statements);
             if (this.name != storedProducer.name || this.regex != storedProducer.regex) return false;
             return true;
         }
@@ -49,7 +45,7 @@ namespace DBComparator.Models
                       default: return m.Value;
                   }
               }
-            );
+            ).Replace("\r\n", "").Replace("\n", "").Replace("\r", "").Replace(" ", "").Replace("\t", "").ToUpper();
         }
 
         public string name { get; set; }

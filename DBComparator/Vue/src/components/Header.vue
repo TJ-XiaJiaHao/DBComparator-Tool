@@ -92,18 +92,19 @@
               else if (response.body.code == 1000) {
                 self.status = "TABLES";
                 self.data = response.body;
-                 console.log("[ RESPONSE ] - ", this.data);
+                console.log("[ RESPONSE ] - ", this.data);
                 bus.$emit("changeData", this.data);
                 self.selectedChange();
-                self.enableAll();
                 if (callback != null) callback();
               }
             }
             else {
-                toastr.error("Server error");
+              toastr.error("Server error");
             }
+            self.enableAll();
           }, function (error) {
             toastr.error("Network error!");
+            self.enableAll();
             // console.log("[ ERROR ] - ", error);
           }
         );
@@ -120,7 +121,7 @@
         });
       },
       hideHeader: function () {
-        bus.$emit("hideTable","");
+        bus.$emit("hideTable", "");
         $(".header-db").css("opacity", "0").css("paddingTop", "10px");
         $(".header-btns").css("opacity", "0").css("marginTop", "17px");
         $(".compare-title-text").css("opacity", "0").css("marginTop", "10px");
@@ -155,11 +156,11 @@
             break;
         }
       },
-      disableAll:function(){
-          $(".btn").attr("disabled",true);
+      disableAll: function () {
+        $(".btn").attr("disabled", true);
       },
-      enableAll:function(){
-        $(".btn").attr("disabled",false);
+      enableAll: function () {
+        $(".btn").attr("disabled", false);
       }
     },
     watch: {

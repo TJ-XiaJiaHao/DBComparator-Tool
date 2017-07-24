@@ -23,7 +23,7 @@ namespace DBComparator.Models
             this.dbnameIfNotCoexit = dbname;
             columns = new List<ColumnDiff>();
             keys = new List<Key>();
-            indexes = new List<Indexs>();
+            indexes = new List<Indexes>();
         }
 
         public string name { get; set; }
@@ -31,6 +31,6 @@ namespace DBComparator.Models
         public string dbnameIfNotCoexit { get; set; }
         public List<ColumnDiff> columns { get; set; }
         public List<Key> keys { get; set; }
-        public List<Indexs> indexes { get; set; }
+        public List<Indexes> indexes { get; set; }
     }
 }

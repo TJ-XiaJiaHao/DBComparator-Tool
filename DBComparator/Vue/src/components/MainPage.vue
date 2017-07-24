@@ -4,7 +4,7 @@
     <col-compare></col-compare>
     <ik-compare></ik-compare>
     <h4 v-if="isNoItems">no items are different</h4>
-    <table class="table table-hover">
+    <table class="table table-hover" onselectstart="return false;">
       <thead>
       <tr>
         <th class="tb-head" v-for="(item,index) in current.header" @click="sort(index)" title="click to sort the table">
@@ -139,7 +139,7 @@
         for (var i = 0; i < list1.length; i++) {
           if (list2.indexOf(list1[i]) >= 0) coexist += 1;
         }
-        return list1.length + list2.length - coexist;
+        return list1.length + list2.length - coexist * 2;
       },
 
       /* Item click event, it will check the current type to decide how to handle it*/

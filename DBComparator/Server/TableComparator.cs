@@ -112,17 +112,23 @@ namespace DBComparator.Server
             SqlDataReader dr2 = SqlServer.ExcuteSqlCommandReader(command, conn2);
             while (dr1.Read())
             {
-                indexes1.Add(new DBIndexes(dr1[0].ToString(), dr1[1].ToString()));
+                if (indexes1.Where(a => a.indexName == dr1[0].ToString() && a.tbName == dr1[1].ToString()).Count() == 0)
+                {
+                    indexes1.Add(new DBIndexes(dr1[0].ToString(), dr1[1].ToString()));
+                }
             }
             while (dr2.Read())
             {
-                indexes2.Add(new DBIndexes(dr2[0].ToString(), dr2[1].ToString()));
+                if (indexes2.Where(a => a.indexName == dr2[0].ToString() && a.tbName == dr2[1].ToString()).Count() == 0)
+                {
+                    indexes2.Add(new DBIndexes(dr2[0].ToString(), dr2[1].ToString()));
+                }
             }
             foreach (Table table in tables)
             {
                 List<DBIndexes> index1 = indexes1.Where(a => a.tbName == table.name).ToList();
                 List<DBIndexes> index2 = indexes2.Where(a => a.tbName == table.name).ToList();
-                table.indexes = compareIndexs(conn1.Database,conn2.Database,table.name,index1, index2);
+                table.indexes = compareIndexs(conn1.Database, conn2.Database, table.name, index1, index2);
             }
 
 
@@ -138,16 +144,16 @@ namespace DBComparator.Server
         /// <param name="conn2"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        private List<Indexs> compareIndexs(string dbname1,string dbname2,string tbname,List<DBIndexes> dbindexes1, List<DBIndexes> dbindexes2)
+        private List<Indexes> compareIndexs(string dbname1,string dbname2,string tbname,List<DBIndexes> dbindexes1, List<DBIndexes> dbindexes2)
         {
 
             // Logger
             DateTime start = DateTime.Now;
             logger.Info("[ compareIndexs ] - start time : " + start.ToString());
 
-            List<Indexs> rtn = new List<Indexs>();
-            Indexs indexs1 = new Indexs(dbname1, tbname);
-            Indexs indexs2 = new Indexs(dbname2, tbname);
+            List<Indexes> rtn = new List<Indexes>();
+            Indexes indexs1 = new Indexes(dbname1, tbname);
+            Indexes indexs2 = new Indexes(dbname2, tbname);
 
             foreach (DBIndexes dbindex in dbindexes1)
             {
