@@ -19,11 +19,11 @@
         <div class="form-group">
           <div class="col-sm-6">
             <input type="text" class="form-control input-lg db-input-text" id="db-username-one" placeholder="username"
-                   :title="tooltipmsg.remote" data-container="body" data-placement="left" v-model="username1"/>
+                   :title="tooltipmsg.username" data-container="body" data-placement="left" v-model="username1"/>
           </div>
           <div class="col-sm-6">
             <input type="password" class="form-control input-lg db-input-text" id="db-password-one" v-model="password1"
-                   placeholder="password" :title="tooltipmsg.remote" data-container="body" data-placement="right"/>
+                   placeholder="password" :title="tooltipmsg.password" data-container="body" data-placement="right"/>
           </div>
         </div>
       </form>
@@ -44,11 +44,11 @@
         <div class="form-group">
           <div class="col-sm-6">
             <input type="text" class="form-control input-lg db-input-text" id="db-username-two" placeholder="username"
-                   :title="tooltipmsg.remote" data-container="body" data-placement="left" v-model="username2"/>
+                   :title="tooltipmsg.username" data-container="body" data-placement="left" v-model="username2"/>
           </div>
           <div class="col-sm-6">
             <input type="password" class="form-control input-lg db-input-text" id="db-password-two" v-model="password2"
-                   placeholder="password" :title="tooltipmsg.remote" data-container="body" data-placement="right"/>
+                   placeholder="password" :title="tooltipmsg.password" data-container="body" data-placement="right"/>
           </div>
         </div>
       </form>
@@ -68,7 +68,8 @@
         tooltipmsg: {
           servername: "please input the server name you used in the sql server management tool !",
           dbname: "please input the database name you want to compare !",
-          remote: "don't need if you connect to the local sql server with windows authentication !"
+          username: "please input the username of the database !",
+          password:"please input the password of the database !"
         },
         server1: "",
         dbname1: "",
@@ -88,14 +89,18 @@
           toastr.error("server name and database name should not be empty !")
           return false;
         }
-        if ((this.username1 == "" && this.password1 != "") || (this.username1 != "" && this.password1 == "")) {
-          toastr.error("username and password should all be empty or all be not empty !");
-          return;
+        if(this.username1 == "" || this.password1 == "" || this.username2 == "" || this.password2 == ""){
+            toastr.error("username and password should not be empty !");
+            return false;
         }
-        if ((this.username2 == "" && this.password2 != "") || (this.username2 != "" && this.password2 == "")) {
-          toastr.error("username and password should all be empty or all be not empty !");
-          return;
-        }
+//        if ((this.username1 == "" && this.password1 != "") || (this.username1 != "" && this.password1 == "")) {
+//          toastr.error("username and password should all be empty or all be not empty !");
+//          return;
+//        }
+//        if ((this.username2 == "" && this.password2 != "") || (this.username2 != "" && this.password2 == "")) {
+//          toastr.error("username and password should all be empty or all be not empty !");
+//          return;
+//        }
         return true;
       },
 

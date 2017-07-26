@@ -99,10 +99,14 @@
               }
             }
             else {
+              self.status = "ERROR: Server error";
+              $(".compare-title-text").css("color", "red");
               toastr.error("Server error");
             }
             self.enableAll();
           }, function (error) {
+          self.status = "ERROR: Network error";
+          $(".compare-title-text").css("color", "red");
             toastr.error("Network error!");
             self.enableAll();
             // console.log("[ ERROR ] - ", error);

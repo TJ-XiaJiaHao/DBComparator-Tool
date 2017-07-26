@@ -1,0 +1,103 @@
+2017-07-25 09:24:38,087 [7] INFO  DBComparator.Controllers.DBComparatorController - [ compareLocal ] - database1 : SHALL778 , Student1 ; database2 : SHALL778 , Student2
+ DBComparator.Controllers.DBComparatorControllername2017-07-25 09:24:38,108 [7] INFO  DBComparator.Controllers.DBComparatorController - [ compareLocal ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Controllers.DBComparatorControllername2017-07-25 09:24:38,110 [7] INFO  DBComparator.Server.SqlServer - [ createConnectionLocal ] - database : SHALL778 , Student1
+ DBComparator.Server.SqlServername2017-07-25 09:24:38,110 [7] INFO  DBComparator.Server.SqlServer - [ createConnectionLocal ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.SqlServername2017-07-25 09:24:38,175 [7] INFO  DBComparator.Server.SqlServer - [ createConnectionLocal ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0650000
+
+ DBComparator.Server.SqlServername2017-07-25 09:24:38,175 [7] INFO  DBComparator.Server.SqlServer - [ createConnectionLocal ] - database : SHALL778 , Student2
+ DBComparator.Server.SqlServername2017-07-25 09:24:38,175 [7] INFO  DBComparator.Server.SqlServer - [ createConnectionLocal ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.SqlServername2017-07-25 09:24:38,178 [7] INFO  DBComparator.Server.SqlServer - [ createConnectionLocal ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0030000
+
+ DBComparator.Server.SqlServername2017-07-25 09:24:38,180 [7] INFO  DBComparator.Server.TableComparator - [ compareTables ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,205 [7] INFO  DBComparator.Server.TableComparator - [ initDiffColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,223 [7] INFO  DBComparator.Server.TableComparator - [ compareColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,224 [7] INFO  DBComparator.Server.TableComparator - [ readColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,226 [7] INFO  DBComparator.Server.TableComparator - [ readColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0020000
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,226 [7] INFO  DBComparator.Server.TableComparator - [ readColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,226 [7] INFO  DBComparator.Server.TableComparator - [ readColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,227 [7] INFO  DBComparator.Server.TableComparator - [ getAndDeleteNoCoexitColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,227 [7] INFO  DBComparator.Server.TableComparator - [ getAndDeleteNoCoexitColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,229 [7] INFO  DBComparator.Server.TableComparator - [ compareColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0060000
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,229 [7] INFO  DBComparator.Server.TableComparator - [ compareColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,229 [7] INFO  DBComparator.Server.TableComparator - [ readColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,229 [7] INFO  DBComparator.Server.TableComparator - [ readColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,229 [7] INFO  DBComparator.Server.TableComparator - [ readColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,229 [7] INFO  DBComparator.Server.TableComparator - [ readColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,229 [7] INFO  DBComparator.Server.TableComparator - [ getAndDeleteNoCoexitColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,229 [7] INFO  DBComparator.Server.TableComparator - [ getAndDeleteNoCoexitColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,229 [7] INFO  DBComparator.Server.TableComparator - [ compareColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,230 [7] INFO  DBComparator.Server.TableComparator - [ compareColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,230 [7] INFO  DBComparator.Server.TableComparator - [ readColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,230 [7] INFO  DBComparator.Server.TableComparator - [ readColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,230 [7] INFO  DBComparator.Server.TableComparator - [ readColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,230 [7] INFO  DBComparator.Server.TableComparator - [ readColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,230 [7] INFO  DBComparator.Server.TableComparator - [ getAndDeleteNoCoexitColumns ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,230 [7] INFO  DBComparator.Server.TableComparator - [ getAndDeleteNoCoexitColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,230 [7] INFO  DBComparator.Server.TableComparator - [ compareColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,230 [7] INFO  DBComparator.Server.TableComparator - [ initDiffColumns ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0250000
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,261 [7] INFO  DBComparator.Server.TableComparator - [ initIndexes ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,277 [7] INFO  DBComparator.Server.TableComparator - [ compareIndexs ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,277 [7] INFO  DBComparator.Server.TableComparator - [ compareIndexs ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,277 [7] INFO  DBComparator.Server.TableComparator - [ compareIndexs ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,277 [7] INFO  DBComparator.Server.TableComparator - [ compareIndexs ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,277 [7] INFO  DBComparator.Server.TableComparator - [ compareIndexs ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,277 [7] INFO  DBComparator.Server.TableComparator - [ compareIndexs ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,277 [7] INFO  DBComparator.Server.TableComparator - [ initIndexes ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0155998
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,277 [7] INFO  DBComparator.Server.TableComparator - [ initKeys ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,292 [7] INFO  DBComparator.Server.TableComparator - [ compareKeys ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,292 [7] INFO  DBComparator.Server.TableComparator - [ compareKeys ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,292 [7] INFO  DBComparator.Server.TableComparator - [ compareKeys ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,292 [7] INFO  DBComparator.Server.TableComparator - [ compareKeys ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,292 [7] INFO  DBComparator.Server.TableComparator - [ compareKeys ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,292 [7] INFO  DBComparator.Server.TableComparator - [ compareKeys ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,292 [7] INFO  DBComparator.Server.TableComparator - [ initKeys ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0155998
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,292 [7] INFO  DBComparator.Server.TableComparator - [ compareTables ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.1123992
+
+ DBComparator.Server.TableComparatorname2017-07-25 09:24:38,292 [7] INFO  DBComparator.Server.StoredProcedureComparator - [ compareStoredProcedure ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.StoredProcedureComparatorname2017-07-25 09:24:38,292 [7] INFO  DBComparator.Server.StoredProcedureComparator - [ getStoredProcedures ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.StoredProcedureComparatorname2017-07-25 09:24:38,323 [7] INFO  DBComparator.Server.StoredProcedureComparator - [ getStoredProcedures ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0311996
+
+ DBComparator.Server.StoredProcedureComparatorname2017-07-25 09:24:38,323 [7] INFO  DBComparator.Server.StoredProcedureComparator - [ getStoredProcedures ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.StoredProcedureComparatorname2017-07-25 09:24:38,355 [7] INFO  DBComparator.Server.StoredProcedureComparator - [ getStoredProcedures ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0311996
+
+ DBComparator.Server.StoredProcedureComparatorname2017-07-25 09:24:38,355 [7] INFO  DBComparator.Server.StoredProcedureComparator - [ getDiffProcedures ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.StoredProcedureComparatorname2017-07-25 09:24:38,355 [7] INFO  DBComparator.Server.StoredProcedureComparator - [ getDiffProcedures ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.StoredProcedureComparatorname2017-07-25 09:24:38,355 [7] INFO  DBComparator.Server.StoredProcedureComparator - [ compareStoredProcedure ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0623992
+
+ DBComparator.Server.StoredProcedureComparatorname2017-07-25 09:24:38,355 [7] INFO  DBComparator.Server.FunctionComparator - [ compareFunctions ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.FunctionComparatorname2017-07-25 09:24:38,355 [7] INFO  DBComparator.Server.FunctionComparator - [ getFunctions ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.FunctionComparatorname2017-07-25 09:24:38,370 [7] INFO  DBComparator.Server.FunctionComparator - [ getFunctions ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0155998
+
+ DBComparator.Server.FunctionComparatorname2017-07-25 09:24:38,370 [7] INFO  DBComparator.Server.FunctionComparator - [ getFunctions ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.FunctionComparatorname2017-07-25 09:24:38,386 [7] INFO  DBComparator.Server.FunctionComparator - [ getFunctions ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0155998
+
+ DBComparator.Server.FunctionComparatorname2017-07-25 09:24:38,386 [7] INFO  DBComparator.Server.FunctionComparator - [ getDiffFunctions ] - start time : 7/25/2017 9:24:38 AM
+ DBComparator.Server.FunctionComparatorname2017-07-25 09:24:38,386 [7] INFO  DBComparator.Server.FunctionComparator - [ getDiffFunctions ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00
+
+ DBComparator.Server.FunctionComparatorname2017-07-25 09:24:38,386 [7] INFO  DBComparator.Server.FunctionComparator - [ compareFunctions ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.0311996
+
+ DBComparator.Server.FunctionComparatorname2017-07-25 09:24:38,386 [7] INFO  DBComparator.Controllers.DBComparatorController - [ compareLocal ] - end time : 7/25/2017 9:24:38 AM ; spend time : 00:00:00.2939980
+
+ DBComparator.Controllers.DBComparatorControllername
