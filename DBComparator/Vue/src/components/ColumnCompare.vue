@@ -84,9 +84,8 @@
         }
 
         /* Show the tables */
-        $("#column-compare").css("display", "block").animate({height: '100%'}, 500);
+        $("#column-compare").css("display", "block").scrollTop(0).animate({height: '100%'}, 500);
       },
-
 
       /* Close the page, actually just set the page display to none*/
       close: function () {
@@ -105,7 +104,7 @@
       })
 
       /* Change the scroll style */
-      $("#column-compare").ready(function () {
+      $(document).ready(function () {
         $("#column-compare").niceScroll({
           styler: "fb",
           cursorcolor: "rgb(201,201,201)",

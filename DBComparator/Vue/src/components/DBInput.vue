@@ -69,7 +69,7 @@
           servername: "please input the server name you used in the sql server management tool !",
           dbname: "please input the database name you want to compare !",
           username: "please input the username of the database !",
-          password:"please input the password of the database !"
+          password: "please input the password of the database !"
         },
         server1: "",
         dbname1: "",
@@ -89,9 +89,9 @@
           toastr.error("server name and database name should not be empty !")
           return false;
         }
-        if(this.username1 == "" || this.password1 == "" || this.username2 == "" || this.password2 == ""){
-            toastr.error("username and password should not be empty !");
-            return false;
+        if (this.username1 == "" || this.password1 == "" || this.username2 == "" || this.password2 == "") {
+          toastr.error("username and password should not be empty !");
+          return false;
         }
 //        if ((this.username1 == "" && this.password1 != "") || (this.username1 != "" && this.password1 == "")) {
 //          toastr.error("username and password should all be empty or all be not empty !");
@@ -123,6 +123,7 @@
 
       /* DBInput IN and OUT animation*/
       hideDBInput: function () {
+        this.save();
         var dbInput = $("#db-input");
         dbInput.animate({paddingTop: '30px', opacity: 0}, 500, function () {
           dbInput.css("display", "none");
@@ -130,12 +131,35 @@
         })
       },
       showDBInput: function (callback) {
+        this.read();
         var dbInput = $("#db-input");
         dbInput.css("display", "block");
         dbInput.animate({paddingTop: '0px', opacity: 1}, 1000, function () {
           //console.log(callback);
           if (callback != null) callback();
         });
+      },
+
+      /* Save or read local data */
+      save: function () {
+        localStorage.pkidbcomparatorserver1 = this.server1;
+        localStorage.pkidbcomparatordbname1 = this.dbname1;
+        localStorage.pkidbcomparatorserver2 = this.server2;
+        localStorage.pkidbcomparatordbname2 = this.dbname2;
+        localStorage.pkidbcomparatorusername1 = this.username1;
+        localStorage.pkidbcomparatorpassword1 = this.password1;
+        localStorage.pkidbcomparatorusername2 = this.username2;
+        localStorage.pkidbcomparatorpassword2 = this.password2;
+      },
+      read: function () {
+        this.server1 = localStorage.pkidbcomparatorserver1;
+        this.dbname1 = localStorage.pkidbcomparatordbname1;
+        this.server2 = localStorage.pkidbcomparatorserver2;
+        this.dbname2 = localStorage.pkidbcomparatordbname2;
+        this.username1 = localStorage.pkidbcomparatorusername1;
+        this.password1 = localStorage.pkidbcomparatorpassword1;
+        this.username2 = localStorage.pkidbcomparatorusername2;
+        this.password2 = localStorage.pkidbcomparatorpassword2;
       }
     },
     mounted() {

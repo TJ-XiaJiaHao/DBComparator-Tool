@@ -1,11 +1,11 @@
 <template>
   <div id="header">
     <dbinput></dbinput>
-    <div class="col-sm-4">
+    <div class="col-sm-5">
       <label class="header-label header-db">{{ server1 }}  {{ dbname1 }} <br/> {{ server2 }}  {{ dbname2 }}</label>
     </div>
-    <div class="col-sm-4 compare-title"><label class="compare-title-text">{{ status }}</label></div>
-    <div class="col-sm-4">
+    <div class="col-sm-2 compare-title"><label class="compare-title-text">{{ status }}</label></div>
+    <div class="col-sm-5 btns">
       <div id="selector" class="header-btns">
         <select id="option-selector" class=" selectpicker form-control" data-width="100%" v-model="selected">
           <option v-for="(item,index) in options">{{ item }}</option>
@@ -13,6 +13,7 @@
       </div>
       <button type="submit" class="btn btn-default header-btns btn-recompare" @click="recompare">RECOMPARE</button>
       <button type="submit" class="btn btn-default header-btns btn-reinput" @click="reinput">REINPUT</button>
+      <button type="submit" class="btn btn-default header-btns btn-visualization" @click="visualization">CHARTS</button>
     </div>
   </div>
 </template>
@@ -165,6 +166,9 @@
       },
       enableAll: function () {
         $(".btn").attr("disabled", false);
+      },
+      visualization: function(){
+        bus.$emit("visualization",this.data);
       }
     },
     watch: {
@@ -225,9 +229,12 @@
   }
 
   /*　右边的按钮　*/
-  .btn-reinput, .btn-recompare, #selector {
+  .btns{
+    padding:0;
+  }
+  .btn-reinput, .btn-recompare, #selector,.btn-visualization {
     float: right;
-    margin: 17px 10px 0;
+    margin: 17px 5px 0;
     opacity: 0;
   }
 

@@ -40,6 +40,8 @@
   * {
     margin: 0;
     padding: 0;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
   }
 
   html, body {

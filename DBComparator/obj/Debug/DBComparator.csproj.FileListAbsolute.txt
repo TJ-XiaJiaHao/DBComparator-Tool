@@ -146,3 +146,5 @@ C:\project\onesource\WebApi\Tool\DBComparator\DBComparator\obj\Debug\DBComparato
 C:\project\onesource\WebApi\Tool\DBComparator\DBComparator\obj\Debug\DBComparator.pdb
 C:\project\onesource\WebApi\Tool\DBComparator\DBComparator\bin\log4net.dll
 C:\project\onesource\WebApi\Tool\DBComparator\DBComparator\bin\log4net.xml
+C:\project\DBComparator\DBComparator\bin\log4net.dll
+C:\project\DBComparator\DBComparator\bin\log4net.xml

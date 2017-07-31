@@ -3,6 +3,7 @@
     <code-compare></code-compare>
     <col-compare></col-compare>
     <ik-compare></ik-compare>
+    <visualization></visualization>
     <h4 v-if="isNoItems">no items are different</h4>
     <table class="table table-hover" onselectstart="return false;">
       <thead>
@@ -30,12 +31,14 @@
   import codeCompare from "@/components/CodeCompare"
   import colCompare from "@/components/ColumnCompare"
   import ikCompare from "@/components/ikCompare"
+  import visualization from "@/components/Visualization"
   export default {
     name: 'DBInput',
     components: {
       codeCompare: codeCompare,
       colCompare: colCompare,
-      ikCompare: ikCompare
+      ikCompare: ikCompare,
+      visualization:visualization
     },
     data () {
       return {
@@ -74,6 +77,7 @@
 
       /* Show different data depends on the show type*/
       initCurrent: function (headers, body, tooltip, type) {
+        $("#main").scrollTop(0);
         this.current.header = headers;
         this.current.body = body;
         this.current.tooltip = tooltip;
@@ -273,34 +277,34 @@
 
       /* Listen for events*/
       bus.$on("showTable", function (data) {
-        console.log("[ EVENT ] - showTable", data);
+        // console.log("[ EVENT ] - showTable", data);
         self.showTable();
         self.data = data;
       })
       bus.$on("hideTable", function (data) {
-        console.log("[ EVENT ] - hideTable", data);
+        // console.log("[ EVENT ] - hideTable", data);
         self.data = {}
         self.clear();
         self.hideTable();
       });
       bus.$on("changeData", function (data) {
-        console.log("[ EVENT ] - changeData", data);
+        // console.log("[ EVENT ] - changeData", data);
         self.data = data;
       });
       bus.$on("showTableDiff", function (data) {
-        console.log("[ EVENT ] - showTableDiff");
+        // console.log("[ EVENT ] - showTableDiff");
         self.hideTable();
         self.showTable();
         self.showTableDiff();
       });
       bus.$on("showProcedureDiff", function (data) {
-        console.log("[ EVENT ] - showProcedureDiff");
+        // console.log("[ EVENT ] - showProcedureDiff");
         self.hideTable();
         self.showTable();
         self.showProcedureDiff();
       });
       bus.$on("showFunctionDiff", function (data) {
-        console.log("[ EVENT ] - showFunctionDiff");
+        // console.log("[ EVENT ] - showFunctionDiff");
         self.hideTable();
         self.showTable();
         self.showFunctionDiff();
